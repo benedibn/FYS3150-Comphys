@@ -1,18 +1,18 @@
-#ifndef TRIDIAGONALMATRIX_HPP
-#define TRIDIAGONALMATRIX_HPP
+#ifndef TRIDIAGONALSPECIAL_HPP
+#define TRIDIAGONALSPECIAL_HPP
 #include <iostream>
 #include <armadillo>
 
 using namespace std;
 using namespace arma;
 
-class TridiagonalMatrix{
+class TridiagonalSpecial{
 private:
-  vec m_a, m_b, m_c;
-  int m_N, m_FLOP;
+  double m_a, m_b, m_c;
+  int m_N,m_FLOP;
 
 public:
-  TridiagonalMatrix(vec&, vec&, vec&);
+  TridiagonalSpecial(int&, double&, double&, double&);
   vec rightMultiplication(vec&);
   bool checkVector(vec&);
   vec solve(vec&);

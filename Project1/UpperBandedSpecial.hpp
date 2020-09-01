@@ -1,18 +1,19 @@
-#ifndef UPPERBANDEDMATRIX_HPP
-#define UPPERBANDEDMATRIX_HPP
+#ifndef UPPERBANDEDSPECIAL_HPP
+#define UPPERBANDEDSPECIAL_HPP
 #include <iostream>
 #include <armadillo>
 
 using namespace std;
 using namespace arma;
 
-class UpperBandedMatrix{
+class UpperBandedSpecial{
 private:
-  vec m_g, m_c;
+  vec m_g;
+  double m_c;
   int m_N, m_FLOP;
 
 public:
-  UpperBandedMatrix(vec&, vec&);
+  UpperBandedSpecial(vec&, double&);
   vec solve(vec&);
   int getFLOP();
 };

@@ -1,18 +1,18 @@
-#ifndef UPPERBANDEDMATRIX_HPP
-#define UPPERBANDEDMATRIX_HPP
+#ifndef LOWERBANDEDMATRIX_HPP
+#define LOWERBANDMEDATRIX_HPP
 #include <iostream>
 #include <armadillo>
 
 using namespace std;
 using namespace arma;
 
-class UpperBandedMatrix{
+class LowerBandedMatrix{
 private:
-  vec m_g, m_c;
+  vec m_h;
   int m_N, m_FLOP;
 
 public:
-  UpperBandedMatrix(vec&, vec&);
+  LowerBandedMatrix(vec&);
   vec solve(vec&);
   int getFLOP();
 };
