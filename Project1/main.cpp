@@ -135,9 +135,10 @@ int dimensionChoice(){
   return n;
 }
 void task1b(){
-  clock_t c_start = clock();
 
   int n = dimensionChoice(); //Change this if you want to prevent the user from choosing the matrix size
+
+  clock_t c_start = clock();
 
   double h = 1./(1+n); //flop++
   int flop = 1;        //FLoating Point Operations
@@ -176,9 +177,11 @@ void task1b(){
 }
 
 void task1c(){
+  
+  int n = dimensionChoice();
+
   clock_t c_start = clock();
 
-  int n = dimensionChoice();
   double h = 1./(1+n); //flop++
   int flop = 1;        //FLoating Point Operations
   vec x(n), b_v(n); //Initializes vectors

@@ -61,7 +61,6 @@ vec TridiagonalSpecial::solve(vec& v){
     h[i] = g[i]/m_b;
   }
   m_FLOP += (3*(m_N-2)); //Amount of FLOPs in the for loop
-  cout << "...................................................." << m_FLOP << endl;
   UpperBandedSpecial U(g,m_c);
   LowerBandedMatrix L(h);
 
