@@ -8,13 +8,19 @@ UpperBandedMatrix::UpperBandedMatrix(vec& g, vec& c){
   m_FLOP = 0;
 }
 
-vec UpperBandedMatrix::solve(vec& b){
+vec UpperBandedMatrix::solve(vec& u){
   /*
-  Solves the equation Ux = b for x.
+  Solves the equation Uv = u for v.
   Counts floating point operations (FLOPS).
   */
-  vec& x = b; //Temporary (wrong) solution to make the program compile and run.
-  return x;
+  vec v(m_N);
+
+  v[m_N] = u[m_N]/m_g[m_N];
+  for (int i = m_N-1; i >= 0; i--){
+    v[i] = (u[i] - m_c[i]*v[i+1])/m_g[i];
+  }
+  m_FLOP += 3*m_N - 2;
+  return v;
 }
 
 int UpperBandedMatrix::getFLOP(){

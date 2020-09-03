@@ -10,12 +10,20 @@ LowerBandedMatrix::LowerBandedMatrix(vec& h){
 
 vec LowerBandedMatrix::solve(vec& b){
   /*
-  Solves the equation Lx = b for x.
+  Solves the equation Lu = b for u.
   Counts floating point operations (FLOPS).
   */
-  vec& x = b; //Temporary (wrong) solution to make the program copmile and run.
-  return x;
+  vec u(m_N);
+  u[0] = b[0];
+  for (int i = 1; i < m_N; i++){
+    u[i] = b[i] - m_h[i-1]*u[i-1];
+  }
+  m_FLOP += 2*(m_N-1);
+  return u;
 }
 int LowerBandedMatrix::getFLOP(){
+  /*
+  Returns FLOP.
+  */
   return m_FLOP;
 }
