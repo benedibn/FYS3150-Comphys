@@ -5,6 +5,7 @@
 #include "UpperBandedSpecial.hpp"
 #include <iostream>
 #include <ctime>
+#include <cmath>
 #include <fstream>
 
 using namespace std;
@@ -16,7 +17,10 @@ void menu();
 void task1b();
 void task1c();
 int dimensionChoice();
-void writeFile(double&, double&);
+double* relError(double*, double*);
+double* closedForm(double*);
+double maxValue(double*);
+
 
 int main(int argc, char const *argv[]){
   /*
@@ -146,7 +150,8 @@ void task1b(){
 
   double h = 1./(1+n); //flop++
   int flop = 1;        //FLoating Point Operations
-  vec a(n-1), b(n), c(n-1), x(n), b_v(n), u(n); //Initializes vectors
+  double *a = new double[n-1], *b = new double[n], *c = new double[n-1];
+  double *x = new double[n], *b_v = new double[n], *u = new double[n], *v = new double[n], *eps = new double[n];//Initializes vectors
   x[0] = h;
   double coeff = 100*h*h;
   flop += 2;
@@ -178,16 +183,12 @@ void task1b(){
     u[i-1] = (b_v[i-1]-c[i-1]*u[i])/b[i-1];
   }
   flop += 3*n-2;
-
-  /*
-  TridiagonalMatrix triMat(a,b,c); //Initializes the matrix
-  vec u = triMat.solve(b_v);
-  flop += triMat.getFLOP();
-  */
+  v = closedForm(x);
+  eps = relError(u,v);
 
   cout << "1b used: " << flop << " floating point operations \n";
 
-  writeFile(u, u);
+  cout << "max error: " << maxValue(eps) << endl;
 
   clock_t c_end = clock();
   double time_ms = 1000.0 * (c_end-c_start)/CLOCKS_PER_SEC;
@@ -202,7 +203,7 @@ void task1c(){
 
   double h = 1./(1+n); //flop++
   int flop = 1;        //FLoating Point Operations
-  vec x(n), b_v(n); //Initializes vectors
+  double *x = new double[n], *b_v = new double[n], *v = new double[n], *eps = new double[n]; //Initializes vectors
   x[0] = h;
   double coeff = 100*h*h;
   flop += 2;
@@ -221,7 +222,7 @@ void task1c(){
   double a = -1., b = 2., c = -1.;
 
 
-  vec d(n), u(n);
+  double *d = new double[n], *u = new double[n];
   for (int i = 0; i < n; i++){
     d[i] = (i+2)/(i+1);
     b_v[i] += (i*b_v[i-1])/(i+1);
@@ -234,42 +235,47 @@ void task1c(){
   }
   flop += 3*n-1;
 
+  v = closedForm(x);
+  eps = relError(u,v);
+
+
+  cout << "max error: " << maxValue(eps) << endl;
 
   cout << "1c used: " << flop << " floating point operations \n";
 
-  /*
-  Plotting goes here
-  */
+
   clock_t c_end = clock();
   double time_ms = 1000.0 * (c_end-c_start)/CLOCKS_PER_SEC;
   cout << "CPU time: " << time_ms << "ms\n";
 }
 
-
-void writeFile(double& u, double& v){
-  char *outfilename;
-  outfilename = "etellerannet";
-
-  ofile.open(outfilename);
-  for (i=0;i<n;i++){
-    ofile << v[i] << " " << u[i] << endl;
+double* relError(double* u, double* v){
+  int n = sizeof(*u)/sizeof(u[0]);
+  double *epsilon= new double[n];
+  for (int i = 0; i < n; i++){
+    epsilon[i] = log10(abs((v[i]-u[i])/u[i]));
   }
-  ofile.close();
+  return epsilon;
+}
+double* closedForm(double* x){
+  int n = sizeof(*x)/sizeof(x[0]);
+  double *u = new double[n];
+  double temp = 1 - exp(-10);
+  for (int i = 0; i < n; i++){
+    u[i] = 1 - temp*x[i] - exp(-10*x[i]);
+  }
+  return u;
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//the end
+double maxValue(double* g){
+  double max = g[0];
+  int o = 0;
+  int n = sizeof(*g)/sizeof(g[0]);
+  for (int i = 0; i < n; i++){
+    if (g[i] > max){
+      o = i;
+    }
+  }
+  return g[o];
+}
