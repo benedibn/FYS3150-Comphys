@@ -5,14 +5,18 @@
 #include "UpperBandedSpecial.hpp"
 #include <iostream>
 #include <ctime>
+#include <fstream>
 
 using namespace std;
+
+ofstream ofile_sol, ofile_error;
 
 double f_b(double&);
 void menu();
 void task1b();
 void task1c();
 int dimensionChoice();
+void writeFile(double&, double&);
 
 int main(int argc, char const *argv[]){
   /*
@@ -183,9 +187,7 @@ void task1b(){
 
   cout << "1b used: " << flop << " floating point operations \n";
 
-  /*
-  Plotting goes here
-  */
+  writeFile(u, u);
 
   clock_t c_end = clock();
   double time_ms = 1000.0 * (c_end-c_start)/CLOCKS_PER_SEC;
@@ -244,4 +246,30 @@ void task1c(){
 }
 
 
-int o = 0;
+void writeFile(double& u, double& v){
+  char *outfilename;
+  outfilename = "etellerannet";
+
+  ofile.open(outfilename);
+  for (i=0;i<n;i++){
+    ofile << v[i] << " " << u[i] << endl;
+  }
+  ofile.close();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//the end
