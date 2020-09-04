@@ -16,6 +16,7 @@ double f_b(double&);
 void menu();
 void task1b();
 void task1c();
+void writeFile(double&);
 int dimensionChoice();
 double* relError(double*, double*);
 double* closedForm(double*);
@@ -279,3 +280,21 @@ double maxValue(double* g){
   }
   return g[o];
 }
+
+void writeFile(double& u, double& v){
+  char *outfilename_sol, *outfilename_error;
+  outfilename = "etellerannet";
+
+  ofile_sol.open(outfilename_sol);
+  ofile_error.open(outfilename_error);
+  for (i=0;i<n;i++){
+    ofile_sol << v[i] << " " << u[i] << endl;
+
+  ofile_sol.close();
+  }
+
+
+
+
+
+//the end
