@@ -142,7 +142,7 @@ void task1b(){
 
   double h = 1./(1+n); //flop++
   int flop = 1;        //FLoating Point Operations
-  vec a(n-1), b(n), c(n-1), x(n), b_v(n); //Initializes vectors
+  double *a = new double[n-1], *b = new double[n], c(n-1), x(n), b_v(n); //Initializes vectors
   x[0] = h;
   double coeff = 100*h*h;
   flop += 2;
@@ -177,7 +177,7 @@ void task1b(){
 }
 
 void task1c(){
-  
+
   int n = dimensionChoice();
 
   clock_t c_start = clock();
