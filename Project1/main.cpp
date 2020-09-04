@@ -142,7 +142,7 @@ void task1b(){
 
   double h = 1./(1+n); //flop++
   int flop = 1;        //FLoating Point Operations
-  vec a(n-1), b(n), c(n-1), x(n), b_v(n); //Initializes vectors
+  vec a(n-1), b(n), c(n-1), x(n), b_v(n), u(n); //Initializes vectors
   x[0] = h;
   double coeff = 100*h*h;
   flop += 2;
@@ -160,11 +160,27 @@ void task1b(){
   }
   b[n-1] = 2;
 
-  flop += (2*n); //one for multiplication, and one for power for each f_b.
+  flop += 3*n - 1;
 
+  for (int i = 1; i < n; i++){
+    b[i] -= a[i]*c[i-1]/b[i-1];
+    b_v[i] -= a[i]*b_v[i-1]/b[i-1];
+  }
+  flop += 6*(n-1);
+
+
+  u[n-1] = b_v[n-1]/b[n-1];
+  for (int i = n-1; i > 0; i--){
+    u[i-1] = (b_v[i-1]-c[i-1]*u[i])/b[i-1];
+  }
+  flop += 3*n-2;
+
+  /*
   TridiagonalMatrix triMat(a,b,c); //Initializes the matrix
   vec u = triMat.solve(b_v);
   flop += triMat.getFLOP();
+  */
+
   cout << "1b used: " << flop << " floating point operations \n";
 
   /*
@@ -177,7 +193,7 @@ void task1b(){
 }
 
 void task1c(){
-  
+
   int n = dimensionChoice();
 
   clock_t c_start = clock();
@@ -197,12 +213,27 @@ void task1c(){
     x[i+1] = x[i] + h;
     b_v[i+1] = coeff*f_b(x[i+1]);
   }
-  flop += (2*n);  //one for multiplication, and one for power for each f_b.
+  flop += 3*n - 1;  //one for multiplication, and one for power for each f_b.
+
+
   double a = -1., b = 2., c = -1.;
-  TridiagonalSpecial triMat(n,a,b,c); //Initializes the matrix
-  vec u = triMat.solve(b_v);
-  flop += triMat.getFLOP();
-  cout << "1b used: " << flop << " floating point operations \n";
+
+
+  vec d(n), u(n);
+  for (int i = 0; i < n; i++){
+    d[i] = (i+2)/(i+1);
+    b_v[i] += (i*b_v[i-1])/(i+1);
+  }
+  flop += 4*n;
+
+  u[n-1] = b_v[n-1]/d[n-1];
+  for (int i = n-1; i > 0; i--){
+    u[i-1] = (i * (b_v[i-1] + u[i]))/i+1;
+  }
+  flop += 3*n-1;
+
+
+  cout << "1c used: " << flop << " floating point operations \n";
 
   /*
   Plotting goes here
