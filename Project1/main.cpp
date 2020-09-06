@@ -4,6 +4,7 @@
 #include "TridiagonalSpecial.hpp"
 #include "UpperBandedSpecial.hpp"
 #include <iostream>
+#include <fstream>
 #include <ctime>
 #include <cmath>
 #include <fstream>
@@ -14,99 +15,84 @@ ofstream ofile_sol, ofile_error;
 
 double f_b(double&);
 void menu();
+<<<<<<< HEAD
 void task1b();
 void task1c();
 void writeFile(double&);
+=======
+double* general(int&);
+double* special(int&);
+>>>>>>> 2f5ae4904e75fced67c718bdc3067ee7738178ce
 int dimensionChoice();
-double* relError(double*, double*);
-double* closedForm(double*);
-double maxValue(double*);
+double* relError(double*, double*, int&);
+double* closedForm(int&);
+double maxValue(double*, int&);
+void writeFile(double*, double*, string&, int&);
+void compareMethods(int&);
 
 
 int main(int argc, char const *argv[]){
   /*
   Main function
   */
-  menu();
+  cout << "Do you want to to compare methods or run the program? \n";
+  cout << "--------------------------------------------------------\n";
+  cout << "1: Compare\n";
+  cout << "2: Run the program\n";
+  cout << "Input: ";
+  int input;
+  cin >> input;
+  double *u,*v;
+
+  int n;
+  if (input == 1){
+    n = dimensionChoice();
+    compareMethods(n);
+  }
+  if (input == 2){
+    int input2;
+    cout << "What dimension matrix do you want to plot?\n";
+    cout << "------------------------------------------\n";
+    cout << "1: 10\n";
+    cout << "2: 100\n";
+    cout << "3: 1000\n";
+    cout << "4: 10000\n";
+    cout << "5: 100000\n";
+    cout << "6: 1000000\n";
+    cout << "Input: ";
+    cin >> input2;
+    int nPlot = pow(10,input2);
+    string errorName = "errorData.txt";
+    double maxError;
+    double *nList = new double[7];
+    double *errList = new double[7];
+    int nPow = 7;
+    for (int i = 1; i < (nPow+1); i++){
+      n = pow(10,i);
+
+      v = general(n);
+      u = closedForm(n);
+
+      if (n == nPlot){
+        string name = "Comparison.txt";
+        writeFile(v,u,name,n);
+      }
+      nList[i-1] = (double) n;
+      errList[i-1] = maxValue(relError(u,v,n),n);
+      writeFile(nList, errList, errorName, nPow);
+    }
+  }
+
+
+  //menu();
   return 0;
 }
 
 double f_b(double& x_i){
-  return exp(x_i);
+  return exp(-10*x_i);
 }
 
-void menu(){
-  int input, input2;
-  while(true){
-    cout << "Choose a number below by writing it in the terminal. \n";
-    cout << "---------------------------------------------------\n";
-    cout << "0: stop \n";
-    cout << "1: Task 1b \n";
-    cout << "2: Task 1c \n";
 
-
-    cout << "Input: ";
-    cin >> input;
-    if (input == 0){
-      break;
-    }
-    if (input == 1){
-      while (true){
-        /*1b menu*/
-        cout << "Choose a number below by writing it in the terminal. \n";
-        cout << "---------------------------------------------------\n";
-        cout << "0: Go back \n";
-        cout << "1: Look at information about Task 1b \n";
-        cout << "2: Solve 1b \n";
-        cout << "Input: ";
-        cin >> input2;
-        if (input2 == 0){
-          break;
-        }
-        if (input2 == 1){
-          /*Info about 1b*/
-          cout << "1b solves the linear algebra problem Ax = b where A is a Tridiagonal matrix ";
-          cout << "with the value 2 on the diagonal and -1 on the neighbouring diagonal lines. ";
-          cout << "The algorithm is built for a general case where these values can be whatever. \n";
-          cout << "The equation is solved by decomposing the matix into a lower and and an upper ";
-          cout << "banded matrix and solving these inidividually.\n";
-          cout << "The program then plots the result alongside the data it's supposed to approximate.\n";
-        }
-        if (input2 == 2){
-          /*Solution of 1b*/
-          task1b();
-        }
-      }
-    }
-    if (input == 2){
-      while(true){
-        /*1c menu*/
-        cout << "Choose a number below by writing it in the terminal. \n";
-        cout << "---------------------------------------------------\n";
-        cout << "0: Go back \n";
-        cout << "1: Look at information about Task 1c \n";
-        cout << "2: Solve 1c \n";
-        cout << "Input: ";
-        cin >> input2;
-        if (input2 == 0){
-          break;
-        }
-        if (input2 == 1){
-          /*Info about 1c*/
-          cout << "1c solves the linear algebra problem Ax = b where A is a Tridiagonal matrix ";
-          cout << "with the value 2 on the diagonal and -1 on the neighbouring diagonal lines. ";
-          cout << "The algorithm is built specifically for this case. \n";
-          cout << "The equation is solved by decomposing the matix into a lower and and an upper ";
-          cout << "banded matrix and solving these inidividually.\n";
-          cout << "The program then plots the result alongside the data it's supposed to approximate.\n";
-        }
-        if (input2 == 2){
-          task1c();
-        }
-      }
-    }
-  }
-}
 int dimensionChoice(){
   /*
   Lets the user decide the dimension of the matrix
@@ -143,22 +129,18 @@ int dimensionChoice(){
   }
   return n;
 }
-void task1b(){
+double* general(int& n){
 
-  int n = dimensionChoice(); //Change this if you want to prevent the user from choosing the matrix size
+  double h = 1./(1+n);
 
-  clock_t c_start = clock();
-
-  double h = 1./(1+n); //flop++
-  int flop = 1;        //FLoating Point Operations
   double *a = new double[n-1], *b = new double[n], *c = new double[n-1];
-  double *x = new double[n], *b_v = new double[n], *u = new double[n], *v = new double[n], *eps = new double[n];//Initializes vectors
+  double *x = new double[n], *b_v = new double[n], *u = new double[n];//Initializes vectors
   x[0] = h;
   double coeff = 100*h*h;
-  flop += 2;
+
   b_v[0] = coeff*f_b(x[0]);
 
-  for (int i = 0; i< n-1; i++){
+  for (int i = 0; i < n-1; i++){
     /*
     Gives values to the vectors making up the matrix as well as the right hand side vector.
     */
@@ -168,46 +150,31 @@ void task1b(){
     x[i+1] = x[i] + h;
     b_v[i+1] = coeff*f_b(x[i+1]);
   }
-  b[n-1] = 2;
 
-  flop += 3*n - 1;
+  b[n-1] = 2;
 
   for (int i = 1; i < n; i++){
     b[i] -= a[i]*c[i-1]/b[i-1];
     b_v[i] -= a[i]*b_v[i-1]/b[i-1];
   }
-  flop += 6*(n-1);
-
 
   u[n-1] = b_v[n-1]/b[n-1];
   for (int i = n-1; i > 0; i--){
     u[i-1] = (b_v[i-1]-c[i-1]*u[i])/b[i-1];
   }
-  flop += 3*n-2;
-  v = closedForm(x);
-  eps = relError(u,v);
 
-  cout << "1b used: " << flop << " floating point operations \n";
-
-  cout << "max error: " << maxValue(eps) << endl;
-
-  clock_t c_end = clock();
-  double time_ms = 1000.0 * (c_end-c_start)/CLOCKS_PER_SEC;
-  cout << "CPU time: " << time_ms << "ms\n";
+  return u;
 }
 
-void task1c(){
+double* special(int& n){
+  /*
+  Solves the problem where all elements in vectors making up the diagonals are the same
+  */
 
-  int n = dimensionChoice();
-
-  clock_t c_start = clock();
-
-  double h = 1./(1+n); //flop++
-  int flop = 1;        //FLoating Point Operations
-  double *x = new double[n], *b_v = new double[n], *v = new double[n], *eps = new double[n]; //Initializes vectors
+  double h = 1./(1+n);
+  double *x = new double[n], *b_v = new double[n]; //Initializes vectors
   x[0] = h;
   double coeff = 100*h*h;
-  flop += 2;
   b_v[0] = coeff*f_b(x[0]);
 
   for (int i = 0; i< n-1; i++){
@@ -217,49 +184,37 @@ void task1c(){
     x[i+1] = x[i] + h;
     b_v[i+1] = coeff*f_b(x[i+1]);
   }
-  flop += 3*n - 1;  //one for multiplication, and one for power for each f_b.
-
 
   double a = -1., b = 2., c = -1.;
-
-
   double *d = new double[n], *u = new double[n];
+
   for (int i = 0; i < n; i++){
     d[i] = (i+2)/(i+1);
     b_v[i] += (i*b_v[i-1])/(i+1);
   }
-  flop += 4*n;
 
   u[n-1] = b_v[n-1]/d[n-1];
   for (int i = n-1; i > 0; i--){
-    u[i-1] = (i * (b_v[i-1] + u[i]))/i+1;
+    u[i-1] = (i * (b_v[i-1] + u[i]))/(i+1);
   }
-  flop += 3*n-1;
-
-  v = closedForm(x);
-  eps = relError(u,v);
-
-
-  cout << "max error: " << maxValue(eps) << endl;
-
-  cout << "1c used: " << flop << " floating point operations \n";
-
-
-  clock_t c_end = clock();
-  double time_ms = 1000.0 * (c_end-c_start)/CLOCKS_PER_SEC;
-  cout << "CPU time: " << time_ms << "ms\n";
+  return u;
 }
 
-double* relError(double* u, double* v){
-  int n = sizeof(*u)/sizeof(u[0]);
+double* relError(double* u, double* v, int& dim){
+  int n = dim;
   double *epsilon= new double[n];
   for (int i = 0; i < n; i++){
     epsilon[i] = log10(abs((v[i]-u[i])/u[i]));
   }
   return epsilon;
 }
-double* closedForm(double* x){
-  int n = sizeof(*x)/sizeof(x[0]);
+double* closedForm(int& n){
+  double h = 1./(n+1);
+  double* x = new double[n];
+  for (int i = 0; i < n; i++){
+    x[i] = h*(i+1);
+  }
+
   double *u = new double[n];
   double temp = 1 - exp(-10);
   for (int i = 0; i < n; i++){
@@ -268,11 +223,10 @@ double* closedForm(double* x){
   return u;
 }
 
-
-double maxValue(double* g){
+double maxValue(double* g, int& dim){
   double max = g[0];
   int o = 0;
-  int n = sizeof(*g)/sizeof(g[0]);
+  int n = dim;
   for (int i = 0; i < n; i++){
     if (g[i] > max){
       o = i;
@@ -280,6 +234,7 @@ double maxValue(double* g){
   }
   return g[o];
 }
+<<<<<<< HEAD
 
 void writeFile(double& u, double& v){
   char *outfilename_sol, *outfilename_error;
@@ -292,4 +247,33 @@ void writeFile(double& u, double& v){
 
   ofile_sol.close();
   }
+=======
+void writeFile(double* v, double* u, string& name, int& dim){
+  ofstream myFile;
+  myFile.open(name);
+  int n = dim;
+  for (int i = 0; i < n; i++){
+    myFile << v[i] << " " << u[i] << endl;
+  }
+  myFile.close();
+}
+void compareMethods(int& n){
+  /*
+  compares CPU time and amount of flops for general and special method of solving the problem as well as armadillo matrix method
+  */
+
+  clock_t c_start1 = clock();
+  double *u1 = general(n);
+  clock_t c_end1 = clock();
+  double time_ms = 1000.0 * (c_end1-c_start1)/CLOCKS_PER_SEC;
+  cout << "CPU time for general method: " << time_ms << "ms\n";
+  cout << "The general method used: " << 12*n - 6 << " floating point operations \n";
+
+  clock_t c_start2 = clock();
+  double *u2 = special(n);
+  clock_t c_end2 = clock();
+  time_ms = 1000.0 * (c_end2-c_start2)/CLOCKS_PER_SEC;
+  cout << "CPU time for special method: " << time_ms << "ms\n";
+  cout << "The special method used: " << 10*n + 1 << " floating point operations \n";
+>>>>>>> 2f5ae4904e75fced67c718bdc3067ee7738178ce
 }
