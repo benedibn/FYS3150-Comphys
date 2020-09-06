@@ -283,18 +283,13 @@ double maxValue(double* g){
 
 void writeFile(double& u, double& v){
   char *outfilename_sol, *outfilename_error;
-  outfilename = "etellerannet";
+  outfilename_sol = "etellerannet";
 
   ofile_sol.open(outfilename_sol);
   ofile_error.open(outfilename_error);
-  for (i=0;i<n;i++){
+  for (int i = 0; i < n; i++){
     ofile_sol << v[i] << " " << u[i] << endl;
 
   ofile_sol.close();
   }
-
-
-
-
-
-//the end
+}
