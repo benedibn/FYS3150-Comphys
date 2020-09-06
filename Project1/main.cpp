@@ -64,7 +64,7 @@ int main(int argc, char const *argv[]){
     for (int i = 1; i < (nPow+1); i++){
       n = pow(10,i);
 
-      v = general(n);
+      v = special(n);
       u = closedForm(n);
 
       if (n == nPlot){
