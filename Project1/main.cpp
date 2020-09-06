@@ -7,13 +7,16 @@
 #include <fstream>
 #include <ctime>
 #include <cmath>
+#include <armadillo>
 
 using namespace std;
+using namespace arma;
 
 double f_b(double&);
 void menu();
 double* general(int&);
 double* special(int&);
+vec preBuilt(int&);
 int dimensionChoice();
 double* relError(double*, double*, int&);
 double* closedForm(int&);
@@ -27,8 +30,8 @@ int main(int argc, char const *argv[]){
   */
   cout << "Do you want to to compare methods or run the program? \n";
   cout << "--------------------------------------------------------\n";
-  cout << "1: Compare\n";
-  cout << "2: Run the program\n";
+  cout << "1: Compare methods\n";
+  cout << "2: Write information to files 'Comparison.txt' and 'ErrorData.txt'\n";
   cout << "Input: ";
   int input;
   cin >> input;
@@ -52,15 +55,15 @@ int main(int argc, char const *argv[]){
     cout << "Input: ";
     cin >> input2;
     int nPlot = pow(10,input2);
-    string errorName = "errorData.txt";
+    string errorName = "ErrorData.txt";
     double maxError;
-    double *nList = new double[7];
-    double *errList = new double[7];
     int nPow = 7;
+    double *nList = new double[nPow];
+    double *errList = new double[nPow];
     for (int i = 1; i < (nPow+1); i++){
       n = pow(10,i);
 
-      v = general(n);
+      v = special(n);
       u = closedForm(n);
 
       if (n == nPlot){
@@ -120,6 +123,9 @@ int dimensionChoice(){
   return n;
 }
 double* general(int& n){
+  /*
+  Solves the problem with a method that knows the matix is tridiagonal, but does not know the values on the tridiagonal to be similar
+  */
 
   double h = 1./(1+n);
 
@@ -158,7 +164,7 @@ double* general(int& n){
 
 double* special(int& n){
   /*
-  Solves the problem where all elements in vectors making up the diagonals are the same
+  Solves the problem where all elements in the vectors making up the diagonals are the same
   */
 
   double h = 1./(1+n);
@@ -167,7 +173,7 @@ double* special(int& n){
   double coeff = 100*h*h;
   b_v[0] = coeff*f_b(x[0]);
 
-  for (int i = 0; i< n-1; i++){
+  for (int i = 0; i < n-1; i++){
     /*
     Gives values to the right hand side vector.
     */
@@ -179,13 +185,13 @@ double* special(int& n){
   double *d = new double[n], *u = new double[n];
 
   for (int i = 0; i < n; i++){
-    d[i] = (i+2)/(i+1);
-    b_v[i] += (i*b_v[i-1])/(i+1);
+    d[i] = (i+2.)/(i+1.);
+    b_v[i] += b_v[i-1]/d[i];
   }
 
   u[n-1] = b_v[n-1]/d[n-1];
   for (int i = n-1; i > 0; i--){
-    u[i-1] = (i * (b_v[i-1] + u[i]))/(i+1);
+    u[i-1] = (b_v[i-1] + u[i])/d[i];
   }
   return u;
 }
@@ -233,6 +239,37 @@ void writeFile(double* v, double* u, string& name, int& dim){
   }
   myFile.close();
 }
+
+vec preBuilt(int& n){
+  mat A(n,n), L, U;
+  A(0,0) = 2; A(0,1) = -1; A(n-1,n-2) = -1; A(n-1,n-1) = 2;
+
+  double h = 1./(n+1);
+  vec x(n), b_v(n); //Initializes vectors
+  x[0] = h;
+  double coeff = 100*h*h;
+  b_v[0] = coeff*f_b(x[0]);
+
+  for (int i = 0; i< n-1; i++){
+    /*
+    Gives values to the right hand side vector.
+    */
+    x[i+1] = x[i] + h;
+    b_v[i+1] = coeff*f_b(x[i+1]);
+  }
+
+  for (int i = 1; i < n-1; i++){
+    A(i,i) = 2;
+    A(i,i-1) = -1;
+    A(i,i+1) = -1;
+  }
+  lu(L,U,A);
+  vec temp = solve(L, b_v);
+  vec u = solve(U,temp);
+
+  return u;
+}
+
 void compareMethods(int& n){
   /*
   compares CPU time and amount of flops for general and special method of solving the problem as well as armadillo matrix method
@@ -242,13 +279,33 @@ void compareMethods(int& n){
   double *u1 = general(n);
   clock_t c_end1 = clock();
   double time_ms = 1000.0 * (c_end1-c_start1)/CLOCKS_PER_SEC;
-  cout << "CPU time for general method: " << time_ms << "ms\n";
-  cout << "The general method used: " << 12*n - 6 << " floating point operations \n";
+  cout << "\nCPU time for general method: " << time_ms << "ms\n";
+  cout << "The general method used: " << 9*n - 8 << " floating point operations \n\n";
 
   clock_t c_start2 = clock();
   double *u2 = special(n);
   clock_t c_end2 = clock();
   time_ms = 1000.0 * (c_end2-c_start2)/CLOCKS_PER_SEC;
   cout << "CPU time for special method: " << time_ms << "ms\n";
-  cout << "The special method used: " << 10*n + 1 << " floating point operations \n";
+  cout << "The special method used: " << 4*n - 1 << " floating point operations \n\n";
+
+  if (n > 1000){
+    int input;
+    cout << "The matrix is too large. The armadillo method might not work. Do you want to try anyway?\n";
+    cout << "----------------------------------------------------------------------------------------\n";
+    cout << "1: No\n";
+    cout << "2: Yes\n";
+    cout << "Input: ";
+    cin >> input;
+    if (input == 1){
+      return;
+    }
+  }
+
+  clock_t c_start3 = clock();
+  vec u3 = preBuilt(n);
+  clock_t c_end3 = clock();
+  time_ms = 1000.0 * (c_end3-c_start3)/CLOCKS_PER_SEC;
+  cout << "CPU time for armadillo method: " << time_ms << "ms\n";
+  cout << "The armadillo method used approximately: " << n*n*n << " floating point operations \n";
 }
