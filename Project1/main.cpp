@@ -15,14 +15,8 @@ ofstream ofile_sol, ofile_error;
 
 double f_b(double&);
 void menu();
-<<<<<<< HEAD
-void task1b();
-void task1c();
-void writeFile(double&);
-=======
 double* general(int&);
 double* special(int&);
->>>>>>> 2f5ae4904e75fced67c718bdc3067ee7738178ce
 int dimensionChoice();
 double* relError(double*, double*, int&);
 double* closedForm(int&);
@@ -234,20 +228,6 @@ double maxValue(double* g, int& dim){
   }
   return g[o];
 }
-<<<<<<< HEAD
-
-void writeFile(double& u, double& v){
-  char *outfilename_sol, *outfilename_error;
-  outfilename_sol = "etellerannet";
-
-  ofile_sol.open(outfilename_sol);
-  ofile_error.open(outfilename_error);
-  for (int i = 0; i < n; i++){
-    ofile_sol << v[i] << " " << u[i] << endl;
-
-  ofile_sol.close();
-  }
-=======
 void writeFile(double* v, double* u, string& name, int& dim){
   ofstream myFile;
   myFile.open(name);
@@ -275,5 +255,4 @@ void compareMethods(int& n){
   time_ms = 1000.0 * (c_end2-c_start2)/CLOCKS_PER_SEC;
   cout << "CPU time for special method: " << time_ms << "ms\n";
   cout << "The special method used: " << 10*n + 1 << " floating point operations \n";
->>>>>>> 2f5ae4904e75fced67c718bdc3067ee7738178ce
 }
