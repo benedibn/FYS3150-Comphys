@@ -2,11 +2,7 @@
 #include <fstream>
 #include <ctime>
 #include <cmath>
-<<<<<<< HEAD
-#include <fstream>
-=======
 #include <armadillo>
->>>>>>> 2306a4e4dfdbd725e56656b073da76b6f9a35964
 
 using namespace std;
 using namespace arma;
