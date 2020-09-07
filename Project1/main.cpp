@@ -1,8 +1,3 @@
-#include "TridiagonalMatrix.hpp"
-#include "UpperBandedMatrix.hpp"
-#include "LowerBandedMatrix.hpp"
-#include "TridiagonalSpecial.hpp"
-#include "UpperBandedSpecial.hpp"
 #include <iostream>
 #include <fstream>
 #include <ctime>
@@ -13,7 +8,6 @@ using namespace std;
 using namespace arma;
 
 double f_b(double&);
-void menu();
 double* general(int&);
 double* special(int&);
 vec preBuilt(int&);
@@ -76,8 +70,6 @@ int main(int argc, char const *argv[]){
     }
   }
 
-
-  //menu();
   return 0;
 }
 
@@ -127,7 +119,7 @@ double* general(int& n){
   Solves the problem with a method that knows the matix is tridiagonal, but does not know the values on the tridiagonal to be similar
   */
 
-  double h = 1./(1+n);
+  double h = 1./(1.+n);
 
   double *a = new double[n-1], *b = new double[n], *c = new double[n-1];
   double *x = new double[n], *b_v = new double[n], *u = new double[n];//Initializes vectors
@@ -181,17 +173,17 @@ double* special(int& n){
     b_v[i+1] = coeff*f_b(x[i+1]);
   }
 
-  double a = -1., b = 2., c = -1.;
   double *d = new double[n], *u = new double[n];
 
-  for (int i = 0; i < n; i++){
+  d[0] = 2;
+  for (int i = 1; i < n; i++){
     d[i] = (i+2.)/(i+1.);
-    b_v[i] += b_v[i-1]/d[i];
+    b_v[i] += b_v[i-1]/d[i-1];
   }
 
   u[n-1] = b_v[n-1]/d[n-1];
   for (int i = n-1; i > 0; i--){
-    u[i-1] = (b_v[i-1] + u[i])/d[i];
+    u[i-1] = (b_v[i-1] + u[i])/d[i-1];
   }
   return u;
 }
