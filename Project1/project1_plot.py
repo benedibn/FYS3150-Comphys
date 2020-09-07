@@ -26,7 +26,7 @@ plt.ylabel("v")
 plt.savefig(figurename)
 plt.show()
 
-with open("errorData.txt", "r") as infile:
+with open("ErrorData.txt", "r") as infile:
     n = []
     eps = []
     for line in infile:
