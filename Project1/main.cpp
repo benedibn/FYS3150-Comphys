@@ -10,8 +10,8 @@ using namespace arma;
 ofstream ofile_sol, ofile_error;
 
 double f_b(double&);
-double* general(int&);
-double* special(int&);
+double* general(int&, double&);
+double* special(int&, double&);
 vec preBuilt(int&);
 int dimensionChoice();
 double* relError(double*, double*, int&);
@@ -60,7 +60,8 @@ int main(int argc, char const *argv[]){
     for (int i = 1; i < (nPow+1); i++){
       n = pow(10,i);
 
-      v = special(n);
+      double time = 0.0;
+      v = special(n,time);
       u = closedForm(n);
 
       if (n == nPlot){
@@ -117,7 +118,7 @@ int dimensionChoice(){
   }
   return n;
 }
-double* general(int& n){
+double* general(int& n, double& time){
   /*
   Solves the problem with a method that knows the matix is tridiagonal, but does not know the values on the tridiagonal to be similar
   */
@@ -141,23 +142,29 @@ double* general(int& n){
     x[i+1] = x[i] + h;
     b_v[i+1] = coeff*f_b(x[i+1]);
   }
+  delete[] x;
 
   b[n-1] = 2;
+  clock_t c_start = clock();
+
 
   for (int i = 1; i < n; i++){
     b[i] -= a[i]*c[i-1]/b[i-1];
     b_v[i] -= a[i]*b_v[i-1]/b[i-1];
   }
+  delete[] a;
 
   u[n-1] = b_v[n-1]/b[n-1];
   for (int i = n-1; i > 0; i--){
     u[i-1] = (b_v[i-1]-c[i-1]*u[i])/b[i-1];
   }
+  clock_t c_end = clock();
+  time += (1000.0 * (c_end-c_start)/CLOCKS_PER_SEC);
 
   return u;
 }
 
-double* special(int& n){
+double* special(int& n, double& time){
   /*
   Solves the problem where all elements in the vectors making up the diagonals are the same
   */
@@ -175,10 +182,13 @@ double* special(int& n){
     x[i+1] = x[i] + h;
     b_v[i+1] = coeff*f_b(x[i+1]);
   }
+  delete[] x;
 
   double *d = new double[n], *u = new double[n];
 
+  clock_t c_start = clock();
   d[0] = 2;
+
   for (int i = 1; i < n; i++){
     d[i] = (i+2.)/(i+1.);
     b_v[i] += b_v[i-1]/d[i-1];
@@ -188,6 +198,9 @@ double* special(int& n){
   for (int i = n-1; i > 0; i--){
     u[i-1] = (b_v[i-1] + u[i])/d[i-1];
   }
+  clock_t c_end = clock();
+  time += (1000.0 * (c_end-c_start)/CLOCKS_PER_SEC);
+
   return u;
 }
 
@@ -202,8 +215,9 @@ double* relError(double* u, double* v, int& dim){
 double* closedForm(int& n){
   double h = 1./(n+1);
   double* x = new double[n];
+  x[0] = h;
   for (int i = 0; i < n; i++){
-    x[i] = h*(i+1);
+    x[i] = x[i-1] + h;
   }
 
   double *u = new double[n];
@@ -269,19 +283,22 @@ void compareMethods(int& n){
   /*
   compares CPU time and amount of flops for general and special method of solving the problem as well as armadillo matrix method
   */
+  double time1 = 0;
+  double time2 = 0;
+  double *u = new double[n], *v = new double[n];
 
-  clock_t c_start1 = clock();
-  double *u1 = general(n);
-  clock_t c_end1 = clock();
-  double time_ms = 1000.0 * (c_end1-c_start1)/CLOCKS_PER_SEC;
-  cout << "\nCPU time for general method: " << time_ms << "ms\n";
+  for (int i = 0; i < 1000; i++){
+      v = general(n,time1);
+      u = special(n,time2);
+      delete[] v;
+      delete[] u;
+  }
+
+  cout << "\nCPU time for general method: " << time1/1000 << "ms\n";
   cout << "The general method used: " << 9*n - 8 << " floating point operations \n\n";
 
-  clock_t c_start2 = clock();
-  double *u2 = special(n);
-  clock_t c_end2 = clock();
-  time_ms = 1000.0 * (c_end2-c_start2)/CLOCKS_PER_SEC;
-  cout << "CPU time for special method: " << time_ms << "ms\n";
+
+  cout << "CPU time for special method: " << time2/1000 << "ms\n";
   cout << "The special method used: " << 4*n - 1 << " floating point operations \n\n";
 
   if (n > 1000){
@@ -300,7 +317,7 @@ void compareMethods(int& n){
   clock_t c_start3 = clock();
   vec u3 = preBuilt(n);
   clock_t c_end3 = clock();
-  time_ms = 1000.0 * (c_end3-c_start3)/CLOCKS_PER_SEC;
+  double time_ms = 1000.0 * (c_end3-c_start3)/CLOCKS_PER_SEC;
   cout << "CPU time for armadillo method: " << time_ms << "ms\n";
   cout << "The armadillo method used approximately: " << n*n*n << " floating point operations \n";
 }
