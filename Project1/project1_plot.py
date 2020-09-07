@@ -22,7 +22,7 @@ plt.plot(x, u, label="Numerical solution" + " n = " + str(len(x)))
 plt.plot(x, v, ":", label="Closed-form solution")
 plt.legend()
 plt.xlabel("x")
-plt.ylabel("y")
+plt.ylabel("v")
 plt.savefig(figurename)
 plt.show()
 
