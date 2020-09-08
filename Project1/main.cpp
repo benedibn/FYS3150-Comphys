@@ -57,7 +57,7 @@ int main(int argc, char const *argv[]){
     for (int i = 1; i < (nPow+1); i++){
       n = pow(10,i);
 
-      v = special(n);
+      v = general(n);
       u = closedForm(n);
 
       if (n == nPlot){
@@ -178,12 +178,12 @@ double* special(int& n){
   d[0] = 2;
   for (int i = 1; i < n; i++){
     d[i] = (i+2.)/(i+1.);
-    b_v[i] += b_v[i-1]/d[i-1];
+    b_v[i] += b_v[i-1]/d[i];
   }
 
   u[n-1] = b_v[n-1]/d[n-1];
   for (int i = n-1; i > 0; i--){
-    u[i-1] = (b_v[i-1] + u[i])/d[i-1];
+    u[i-1] = (b_v[i-1] + u[i])/d[i];
   }
   return u;
 }
