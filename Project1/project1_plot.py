@@ -1,7 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
-with open("Comparison.txt", "r") as infile:
+#import sys
+"""
+if sys.argc==3:
+    comparison_name = str(sys.argv[1])
+    error_name = str(sys.argv[2])
+else:
+    print("You need to enter the name of the comparison- and the error-file")
+"""
+with open("ComparisonSpecial.txt", "r") as infile:
     u = []
     v = []
     for line in infile:
@@ -26,7 +33,7 @@ plt.ylabel("y")
 plt.savefig(figurename)
 plt.show()
 
-with open("ErrorData.txt", "r") as infile:
+with open("ErrorSpecial", "r") as infile:
     n = []
     eps = []
     for line in infile:
