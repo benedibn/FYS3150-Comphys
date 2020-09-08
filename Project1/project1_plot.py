@@ -24,29 +24,29 @@ else:
             n.append(float(element[0]))
             eps.append(float(element[1]))
 
-hh = 1/(float(len(u))+1)
-u = np.array(u)
-v = np.array(v)
-x = np.array([float((i+1)*hh) for i in range(len(u))])
+    hh = 1/(float(len(u))+1)
+    u = np.array(u)
+    v = np.array(v)
+    x = np.array([float((i+1)*hh) for i in range(len(u))])
 
-print(len(x))
-print(len(u))
+    print(len(x))
+    print(len(u))
 
-figurename1 = comparison_name.strip(".txt") + "n" + str(len(u)) + ".png"
-plt.plot(x, u, label="Numerical solution" + " n = " + str(len(x)))
-plt.plot(x, v, ":", label="Closed-form solution")
-plt.legend()
-plt.xlabel("x")
-plt.ylabel("y")
-plt.savefig(figurename1)
-plt.show()
+    figurename1 = comparison_name.strip(".txt") + "n" + str(len(u)) + ".png"
+    plt.plot(x, u, label="Numerical solution" + " n = " + str(len(x)))
+    plt.plot(x, v, ":", label="Closed-form solution")
+    plt.legend()
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.savefig(figurename1)
+    plt.show()
 
-h = 1/(np.array(n)+1)
-eps = np.array(eps)
+    h = 1/(np.array(n)+1)
+    eps = np.array(eps)
 
-figurename2 = error_name.strip(".txt") + ".png"
-plt.plot(np.log10(h),eps)
-plt.xlabel("log10(h)")
-plt.ylabel("log10(max_error)")
-plt.savefig(figurename2)
-plt.show()
+    figurename2 = error_name.strip(".txt") + ".png"
+    plt.plot(np.log10(h),eps)
+    plt.xlabel("log10(h)")
+    plt.ylabel("log10(max_error)")
+    plt.savefig(figurename2)
+    plt.show()
