@@ -15,7 +15,7 @@ int dimensionChoice();
 double* relError(double*, double*, int&);
 double* closedForm(int&);
 double maxValue(double*, int&);
-void writeFile(double*, double*, string&, int&);
+void writeFile(double*, double*, int&, ofstream&);
 void compareMethods(int&);
 
 int main(int argc, char const *argv[]){
@@ -95,17 +95,27 @@ int main(int argc, char const *argv[]){
       }
 
       u = closedForm(n);
+      ofstream myFile;
+
+
 
       if (n == nPlot){
         /*
         chooses which file is written for plotting
         */
-        writeFile(v,u,name,n);
+        myFile.open(name);
+        myFile << 0 << " " << 0 << endl;
+        writeFile(v,u,n,myFile);
+        myFile << 0 << " " << 0 << endl;
+        myFile.close();
       }
       nList[i-1] = (double) n;
       errList[i-1] = maxValue(relError(u,v,n),n);
-      writeFile(nList, errList, errorName, nPow);
-      delete[] u,v,nList,errList;
+      ofstream myFile2;
+      myFile2.open(errorName);
+      writeFile(nList, errList, nPow,myFile2);
+      myFile2.close();
+      //delete[] u,v,nList,errList;
     }
   }
 
@@ -310,20 +320,18 @@ double maxValue(double* g, int& dim){
   }
   return g[o];
 }
-void writeFile(double* v, double* u, string& name, int& dim){
+void writeFile(double* v, double* u, int& dim, ofstream& aFile){
   /*
   Writes all elements of two vectors u and v to a file with a given name
   */
-  ofstream myFile;
-  myFile.open(name);
   int n = dim;
   for (int i = 0; i < n; i++){
     /*
     Writes one line
     */
-    myFile << v[i] << " " << u[i] << endl;
+    aFile << v[i] << " " << u[i] << endl;
   }
-  myFile.close();
+
 }
 
 vec preBuilt(int& n){
