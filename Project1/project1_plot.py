@@ -1,14 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
-#import sys
-"""
-if sys.argc==3:
+import sys
+
+if len(sys.argv)==3:
     comparison_name = str(sys.argv[1])
     error_name = str(sys.argv[2])
 else:
     print("You need to enter the name of the comparison- and the error-file")
-"""
-with open("ComparisonSpecial.txt", "r") as infile:
+
+with open(comparison_name, "r") as infile:
     u = []
     v = []
     for line in infile:
@@ -24,7 +24,7 @@ x = np.array([float((i+1)*hh) for i in range(len(u))])
 print(len(x))
 print(len(u))
 
-figurename = "comparison_n" + str(len(u))
+figurename = comparison_name.strip(".txt") + "n" + str(len(u))
 plt.plot(x, u, label="Numerical solution" + " n = " + str(len(x)))
 plt.plot(x, v, ":", label="Closed-form solution")
 plt.legend()
@@ -33,7 +33,7 @@ plt.ylabel("y")
 plt.savefig(figurename)
 plt.show()
 
-with open("ErrorSpecial", "r") as infile:
+with open(error_name, "r") as infile:
     n = []
     eps = []
     for line in infile:
