@@ -29,7 +29,7 @@ int main(int argc, char const *argv[]){
   cout << "Input: ";
   int input;
   cin >> input;
-  double *u,*v;
+
 
   int n;
   if (input == 1){
@@ -45,6 +45,10 @@ int main(int argc, char const *argv[]){
     1 for comparing the closed form solution to the algorhitm of choice.
     1 for comparing the logaritmic absolute value of the error.
     */
+    double *u;
+    double *v;
+    double *errList;
+    double *nList;
     int input2, input3 = 0;
     cout << "What dimension matrix do you want to plot?\n";
     cout << "------------------------------------------\n";
@@ -59,8 +63,8 @@ int main(int argc, char const *argv[]){
     int nPlot = pow(10,input2);
     double maxError;
     int nPow = 7;
-    double *nList = new double[nPow];
-    double *errList = new double[nPow];
+    nList = new double[nPow];
+    errList = new double[nPow];
 
     while (input3 != 1 && input3 != 2){
       /*
@@ -87,11 +91,12 @@ int main(int argc, char const *argv[]){
         name = "ComparisonGeneral.txt";
         errorName = "ErrorGeneral.txt";
       }
-      if (input3 == 2){
+      else if (input3 == 2){
         v = special(n,time);
         name = "ComparisonSpecial.txt";
         errorName = "ErrorSpecial.txt";
       }
+      else{cout << "Something went wrong!\n"; return 1;}
 
       u = closedForm(n);
 
