@@ -37,7 +37,7 @@ else:
     plt.plot(x, v, ":", label="Closed-form solution")
     plt.legend()
     plt.xlabel("x")
-    plt.ylabel("y")
+    plt.ylabel("u(x)")
     plt.savefig(figurename1)
     plt.show()
 
