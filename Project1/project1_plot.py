@@ -32,8 +32,13 @@ else:
     print(len(x))
     print(len(u))
 
+<<<<<<< HEAD
     figurename1 = comparison_name.strip(".txt") + "n" + str(len(u)-2) + ".png"
     plt.plot(x, u, label="Numerical solution" + " n = " + str(len(x)-2))
+=======
+    figurename1 = comparison_name.strip(".txt") + "n" + str(len(u)) + ".png"
+    plt.plot(x, u, label="Numerical solution" + " n = " + str(len(x)))
+>>>>>>> e5ca140f9f35bc199067e389af336f25f1de36a8
     plt.plot(x, v, ":", label="Closed-form solution")
     plt.legend()
     plt.xlabel("x")

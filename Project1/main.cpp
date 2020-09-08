@@ -74,14 +74,13 @@ int main(int argc, char const *argv[]){
       cin >> input3;
     }
 
-
+    string name, errorName;
+    double time = 0.0;
     for (int i = 1; i < (nPow+1); i++){
       /*
       writes the error information
       */
       n = pow(10,i);
-      string name, errorName;
-      double time = 0.0;
 
       if (input3 == 1){
         v = general(n,time);
@@ -95,14 +94,13 @@ int main(int argc, char const *argv[]){
       }
 
       u = closedForm(n);
-      ofstream myFile;
-
 
 
       if (n == nPlot){
         /*
         chooses which file is written for plotting
         */
+        ofstream myFile;
         myFile.open(name);
         myFile << 0 << " " << 0 << endl;
         writeFile(v,u,n,myFile);
@@ -111,12 +109,13 @@ int main(int argc, char const *argv[]){
       }
       nList[i-1] = (double) n;
       errList[i-1] = maxValue(relError(u,v,n),n);
-      ofstream myFile2;
-      myFile2.open(errorName);
-      writeFile(nList, errList, nPow,myFile2);
-      myFile2.close();
-      //delete[] u,v,nList,errList;
+
     }
+    ofstream myFile2;
+    myFile2.open(errorName);
+    writeFile(nList, errList, nPow,myFile2);
+    myFile2.close();
+    delete[] u,v,nList,errList;
   }
 
   return 0;
