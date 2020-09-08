@@ -7,8 +7,6 @@
 using namespace std;
 using namespace arma;
 
-ofstream ofile_sol, ofile_error;
-
 double f_b(double&);
 double* general(int&, double&);
 double* special(int&, double&);
@@ -20,7 +18,6 @@ double maxValue(double*, int&);
 void writeFile(double*, double*, string&, int&);
 void compareMethods(int&);
 
-
 int main(int argc, char const *argv[]){
   /*
   Main function
@@ -28,7 +25,7 @@ int main(int argc, char const *argv[]){
   cout << "Do you want to to compare methods or run the program? \n";
   cout << "--------------------------------------------------------\n";
   cout << "1: Compare methods\n";
-  cout << "2: Write information to files 'Comparison.txt' and 'ErrorData.txt'\n";
+  cout << "2: Write information files for comparison and error\n";
   cout << "Input: ";
   int input;
   cin >> input;
@@ -36,11 +33,19 @@ int main(int argc, char const *argv[]){
 
   int n;
   if (input == 1){
+    /*
+    Compares the general, special and armadillo methods for a matrix whose dimensions are chosen by user
+    */
     n = dimensionChoice();
     compareMethods(n);
   }
   if (input == 2){
-    int input2;
+    /*
+    Writes two text files:
+    1 for comparing the closed form solution to the algorhitm of choice.
+    1 for comparing the logaritmic absolute value of the error.
+    */
+    int input2, input3 = 0;
     cout << "What dimension matrix do you want to plot?\n";
     cout << "------------------------------------------\n";
     cout << "1: 10\n";
@@ -52,25 +57,55 @@ int main(int argc, char const *argv[]){
     cout << "Input: ";
     cin >> input2;
     int nPlot = pow(10,input2);
-    string errorName = "ErrorData.txt";
     double maxError;
     int nPow = 7;
     double *nList = new double[nPow];
     double *errList = new double[nPow];
-    for (int i = 1; i < (nPow+1); i++){
-      n = pow(10,i);
 
+    while (input3 != 1 && input3 != 2){
+      /*
+      Runs until the user has figured out how the menu works
+      */
+      cout << "Do you want to use the special or the general method?\n";
+      cout << "-----------------------------------------------------\n";
+      cout << "1: General\n";
+      cout << "2: Special\n";
+      cout << "Input: ";
+      cin >> input3;
+    }
+
+
+    for (int i = 1; i < (nPow+1); i++){
+      /*
+      writes the error information
+      */
+      n = pow(10,i);
+      string name, errorName;
       double time = 0.0;
-      v = special(n,time);
+
+      if (input3 == 1){
+        v = general(n,time);
+        name = "ComparisonGeneral.txt";
+        errorName = "ErrorGeneral.txt";
+      }
+      if (input3 == 2){
+        v = special(n,time);
+        name = "ComparisonSpecial.txt";
+        errorName = "ErrorSpecial.txt";
+      }
+
       u = closedForm(n);
 
       if (n == nPlot){
-        string name = "Comparison.txt";
+        /*
+        chooses which file is written for plotting
+        */
         writeFile(v,u,name,n);
       }
       nList[i-1] = (double) n;
       errList[i-1] = maxValue(relError(u,v,n),n);
       writeFile(nList, errList, errorName, nPow);
+      delete[] u,v,nList,errList;
     }
   }
 
@@ -78,16 +113,22 @@ int main(int argc, char const *argv[]){
 }
 
 double f_b(double& x_i){
+  /*
+  Part of the closed form algorhitm
+  */
   return exp(-10*x_i);
 }
 
 
 int dimensionChoice(){
   /*
-  Lets the user decide the dimension of the matrix
+  Provides the user with a menu for choosing n
   */
   int n;
   while(true){
+    /*
+    restarts the menu if the user writes an invalid number.
+    */
     cout << "What do you want the dimension of the square matrix to be?\n";
     cout << "----------------------------------------------------------\n";
     cout << "1: 10\n";
@@ -120,7 +161,8 @@ int dimensionChoice(){
 }
 double* general(int& n, double& time){
   /*
-  Solves the problem with a method that knows the matix is tridiagonal, but does not know the values on the tridiagonal to be similar
+  Solves the problem with a method that knows the matix is tridiagonal,
+  but treats the values on these diagonals like different values.
   */
 
   double h = 1./(1.+n);
@@ -134,7 +176,7 @@ double* general(int& n, double& time){
 
   for (int i = 0; i < n-1; i++){
     /*
-    Gives values to the vectors making up the matrix as well as the right hand side vector.
+    Initializes the matrix vector as well as the right hand side vector
     */
     a[i] = -1;
     c[i] = -1;
@@ -148,14 +190,22 @@ double* general(int& n, double& time){
   clock_t c_start = clock();
 
 
+
   for (int i = 1; i < n; i++){
-    b[i] -= a[i]*c[i-1]/b[i-1];
-    b_v[i] -= a[i]*b_v[i-1]/b[i-1];
+    /*
+    Gives new values to the diagonal vector and the right hand side according to row reduction
+    */
+    b[i] -= c[i-1]*(a[i-1]/b[i-1]);
+    b_v[i] -= b_v[i-1]*(a[i-1]/b[i-1]);
   }
   delete[] a;
 
   u[n-1] = b_v[n-1]/b[n-1];
+
   for (int i = n-1; i > 0; i--){
+    /*
+    Backwards substitution
+    */
     u[i-1] = (b_v[i-1]-c[i-1]*u[i])/b[i-1];
   }
   clock_t c_end = clock();
@@ -177,7 +227,7 @@ double* special(int& n, double& time){
 
   for (int i = 0; i < n-1; i++){
     /*
-    Gives values to the right hand side vector.
+    Initializes the right hand side vector
     */
     x[i+1] = x[i] + h;
     b_v[i+1] = coeff*f_b(x[i+1]);
@@ -190,12 +240,18 @@ double* special(int& n, double& time){
   d[0] = 2;
 
   for (int i = 1; i < n; i++){
+    /*
+    Gives new values to the diagonal vector and the right hand side according to row reduction
+    */
     d[i] = (i+2.)/(i+1.);
     b_v[i] += b_v[i-1]/d[i-1];
   }
 
   u[n-1] = b_v[n-1]/d[n-1];
   for (int i = n-1; i > 0; i--){
+    /*
+    Backwards substitution
+    */
     u[i-1] = (b_v[i-1] + u[i])/d[i-1];
   }
   clock_t c_end = clock();
@@ -205,6 +261,9 @@ double* special(int& n, double& time){
 }
 
 double* relError(double* u, double* v, int& dim){
+  /*
+  Returns the logaritmic relative error between two vectors
+  */
   int n = dim;
   double *epsilon= new double[n];
   for (int i = 0; i < n; i++){
@@ -213,24 +272,36 @@ double* relError(double* u, double* v, int& dim){
   return epsilon;
 }
 double* closedForm(int& n){
+  /*
+  Returns a vector that correspond to the exact solution (although quantified).
+  */
   double h = 1./(n+1);
   double* x = new double[n];
   x[0] = h;
   for (int i = 0; i < n; i++){
+    /*
+    linspace
+    */
     x[i] = x[i-1] + h;
   }
 
   double *u = new double[n];
   double temp = 1 - exp(-10);
   for (int i = 0; i < n; i++){
+    /*
+    Correct solution
+    */
     u[i] = 1 - temp*x[i] - exp(-10*x[i]);
   }
   return u;
 }
 
 double maxValue(double* g, int& dim){
+  /*
+  returns the largest value in a set
+  */
   double max = g[0];
-  int o = 0;
+  int o = 0;        //Index corresponding to the largest value counted thus far.
   int n = dim;
   for (int i = 0; i < n; i++){
     if (g[i] > max){
@@ -240,16 +311,26 @@ double maxValue(double* g, int& dim){
   return g[o];
 }
 void writeFile(double* v, double* u, string& name, int& dim){
+  /*
+  Writes all elements of two vectors u and v to a file with a given name
+  */
   ofstream myFile;
   myFile.open(name);
   int n = dim;
   for (int i = 0; i < n; i++){
+    /*
+    Writes one line
+    */
     myFile << v[i] << " " << u[i] << endl;
   }
   myFile.close();
 }
 
 vec preBuilt(int& n){
+  /*
+  Solves the problem with armadillo methods
+  */
+
   mat A(n,n), L, U;
   A(0,0) = 2; A(0,1) = -1; A(n-1,n-2) = -1; A(n-1,n-1) = 2;
 
@@ -268,13 +349,16 @@ vec preBuilt(int& n){
   }
 
   for (int i = 1; i < n-1; i++){
+    /*
+    Initializes the matrix
+    */
     A(i,i) = 2;
     A(i,i-1) = -1;
     A(i,i+1) = -1;
   }
-  lu(L,U,A);
-  vec temp = solve(L, b_v);
-  vec u = solve(U,temp);
+  lu(L,U,A);      //LU decomposition
+  vec temp = solve(L, b_v);     //Forward substitution
+  vec u = solve(U,temp);        //Backwards substitution
 
   return u;
 }
@@ -288,10 +372,13 @@ void compareMethods(int& n){
   double *u = new double[n], *v = new double[n];
 
   for (int i = 0; i < 1000; i++){
-      v = general(n,time1);
-      u = special(n,time2);
-      delete[] v;
-      delete[] u;
+    /*
+    Adds the time of running the funcions once. This is average over when printed
+    */
+    v = general(n,time1);
+    u = special(n,time2);
+    delete[] v;
+    delete[] u;
   }
 
   cout << "\nCPU time for general method: " << time1/1000 << "ms\n";
@@ -302,6 +389,9 @@ void compareMethods(int& n){
   cout << "The special method used: " << 4*n - 1 << " floating point operations \n\n";
 
   if (n > 1000){
+    /*
+    Gives the user the option to terminate the program if it tries to run the armadillo method for a large matrix.
+    */
     int input;
     cout << "The matrix is too large. The armadillo method might not work. Do you want to try anyway?\n";
     cout << "----------------------------------------------------------------------------------------\n";
