@@ -87,11 +87,12 @@ int main(int argc, char const *argv[]){
         name = "ComparisonGeneral.txt";
         errorName = "ErrorGeneral.txt";
       }
-      if (input3 == 2){
+      else if (input3 == 2){
         v = special(n,time);
         name = "ComparisonSpecial.txt";
         errorName = "ErrorSpecial.txt";
       }
+      else{cout << "Something went wrong!\n"; return 1;}
 
       u = closedForm(n);
 
