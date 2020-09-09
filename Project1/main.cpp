@@ -15,7 +15,7 @@ int dimensionChoice();
 double* relError(double*, double*, int&);
 double* closedForm(int&);
 double maxValue(double*, int&);
-void writeFile(double*, double*, string&, int&);
+void writeFile(double*, double*, int&, ofstream&);
 void compareMethods(int&);
 
 int main(int argc, char const *argv[]){
@@ -29,7 +29,7 @@ int main(int argc, char const *argv[]){
   cout << "Input: ";
   int input;
   cin >> input;
-  double *u,*v;
+
 
   int n;
   if (input == 1){
@@ -45,6 +45,10 @@ int main(int argc, char const *argv[]){
     1 for comparing the closed form solution to the algorhitm of choice.
     1 for comparing the logaritmic absolute value of the error.
     */
+    double *u;
+    double *v;
+    double *errList;
+    double *nList;
     int input2, input3 = 0;
     cout << "What dimension matrix do you want to plot?\n";
     cout << "------------------------------------------\n";
@@ -59,8 +63,8 @@ int main(int argc, char const *argv[]){
     int nPlot = pow(10,input2);
     double maxError;
     int nPow = 7;
-    double *nList = new double[nPow];
-    double *errList = new double[nPow];
+    nList = new double[nPow];
+    errList = new double[nPow];
 
     while (input3 != 1 && input3 != 2){
       /*
@@ -74,39 +78,54 @@ int main(int argc, char const *argv[]){
       cin >> input3;
     }
 
-
+    string name, errorName;
+    double time = 0.0;
     for (int i = 1; i < (nPow+1); i++){
       /*
       writes the error information
       */
       n = pow(10,i);
-      string name, errorName;
-      double time = 0.0;
 
       if (input3 == 1){
         v = general(n,time);
         name = "ComparisonGeneral.txt";
         errorName = "ErrorGeneral.txt";
       }
-      if (input3 == 2){
+      else if (input3 == 2){
         v = special(n,time);
         name = "ComparisonSpecial.txt";
         errorName = "ErrorSpecial.txt";
       }
+      else{cout << "Something went wrong!\n"; return 1;}
 
       u = closedForm(n);
+
 
       if (n == nPlot){
         /*
         chooses which file is written for plotting
         */
-        writeFile(v,u,name,n);
+        ofstream myFile;
+        myFile.open(name);
+        myFile << 0 << " " << 0 << endl;
+        writeFile(v,u,n,myFile);
+        myFile << 0 << " " << 0 << endl;
+        myFile.close();
       }
       nList[i-1] = (double) n;
       errList[i-1] = maxValue(relError(u,v,n),n);
+<<<<<<< HEAD
       writeFile(nList, errList, errorName, nPow);
       //delete[] u,v,nList,errList;
+=======
+
+>>>>>>> bcf6c5b31aef7f763e2039e91637633346006dce
     }
+    ofstream myFile2;
+    myFile2.open(errorName);
+    writeFile(nList, errList, nPow,myFile2);
+    myFile2.close();
+    delete[] u,v,nList,errList;
   }
 
   return 0;
@@ -310,20 +329,18 @@ double maxValue(double* g, int& dim){
   }
   return g[o];
 }
-void writeFile(double* v, double* u, string& name, int& dim){
+void writeFile(double* v, double* u, int& dim, ofstream& aFile){
   /*
   Writes all elements of two vectors u and v to a file with a given name
   */
-  ofstream myFile;
-  myFile.open(name);
   int n = dim;
   for (int i = 0; i < n; i++){
     /*
     Writes one line
     */
-    myFile << v[i] << " " << u[i] << endl;
+    aFile << v[i] << " " << u[i] << endl;
   }
-  myFile.close();
+
 }
 
 vec preBuilt(int& n){
