@@ -80,6 +80,7 @@ int main(int argc, char const *argv[]){
 
     string name, errorName;
     double time = 0.0;
+    ofstream myFile, myFile2;
     for (int i = 1; i < (nPow+1); i++){
       /*
       writes the error information
@@ -91,21 +92,18 @@ int main(int argc, char const *argv[]){
         name = "ComparisonGeneral.txt";
         errorName = "ErrorGeneral.txt";
       }
-      else if (input3 == 2){
+      else{
         v = special(n,time);
         name = "ComparisonSpecial.txt";
         errorName = "ErrorSpecial.txt";
       }
-      else{cout << "Something went wrong!\n"; return 1;}
-
       u = closedForm(n);
-
 
       if (n == nPlot){
         /*
         chooses which file is written for plotting
         */
-        ofstream myFile;
+
         myFile.open(name);
         myFile << 0 << " " << 0 << endl;
         writeFile(v,u,n,myFile);
@@ -116,7 +114,6 @@ int main(int argc, char const *argv[]){
       errList[i-1] = maxValue(relError(u,v,n),n);
 
     }
-    ofstream myFile2;
     myFile2.open(errorName);
     writeFile(nList, errList, nPow,myFile2);
     myFile2.close();
@@ -222,6 +219,7 @@ double* general(int& n, double& time){
     */
     u[i-1] = (b_v[i-1]-c[i-1]*u[i])/b[i-1];
   }
+  delete[] c, b_v;
   clock_t c_end = clock();
   time += (1000.0 * (c_end-c_start)/CLOCKS_PER_SEC);
 
@@ -268,6 +266,7 @@ double* special(int& n, double& time){
     */
     u[i-1] = (b_v[i-1] + u[i])/d[i-1];
   }
+  delete[] b_v, d;
   clock_t c_end = clock();
   time += (1000.0 * (c_end-c_start)/CLOCKS_PER_SEC);
 
@@ -307,6 +306,7 @@ double* closedForm(int& n){
     */
     u[i] = 1 - temp*x[i] - exp(-10*x[i]);
   }
+  delete[] x;
   return u;
 }
 
