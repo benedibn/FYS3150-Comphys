@@ -13,8 +13,8 @@ else:
         v = []
         for line in infile:
             element = line.split()
-            u.append(float(element[0]))
-            v.append(float(element[1]))
+            v.append(float(element[0]))
+            u.append(float(element[1]))
 
     with open(error_name, "r") as infile:
         n = []
@@ -33,8 +33,8 @@ else:
     print(len(u))
 
     figurename1 = comparison_name.strip(".txt") + "n" + str(len(x)-2) + ".png"
-    plt.plot(x, u, label="Numerical solution" + " n = " + str(len(x)-2))
-    plt.plot(x, v, ":", label="Closed-form solution")
+    plt.plot(x, v, label="Numerical solution" + " n = " + str(len(x)-2))
+    plt.plot(x, u, ":", label="Closed-form solution")
     plt.legend()
     plt.xlabel("x")
     plt.ylabel("u(x)")
