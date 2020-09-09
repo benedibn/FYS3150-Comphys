@@ -22,6 +22,7 @@ int main(int argc, char const *argv[]){
   /*
   Main function
   */
+  (void) argc; (void) argv;
   cout << "Do you want to to compare methods or run the program? \n";
   cout << "--------------------------------------------------------\n";
   cout << "1: Compare methods\n";
@@ -61,7 +62,7 @@ int main(int argc, char const *argv[]){
     cout << "Input: ";
     cin >> input2;
     int nPlot = pow(10,input2);
-    double maxError;
+
     int nPow = 7;
     nList = new double[nPow];
     errList = new double[nPow];
@@ -117,7 +118,6 @@ int main(int argc, char const *argv[]){
     myFile2.open(errorName);
     writeFile(nList, errList, nPow,myFile2);
     myFile2.close();
-    delete[] u,v,nList,errList;
   }
 
   return 0;
@@ -179,7 +179,7 @@ double* general(int& n, double& time){
   double h = 1./(1.+n);
 
   double *a = new double[n-1], *b = new double[n], *c = new double[n-1];
-  double *x = new double[n], *b_v = new double[n], *u = new double[n];//Initializes vectors
+  double *x = new double[n], *b_v = new double[n], *u_g = new double[n];//Initializes vectors
   x[0] = h;
   double coeff = 100*h*h;
 
@@ -195,12 +195,9 @@ double* general(int& n, double& time){
     x[i+1] = x[i] + h;
     b_v[i+1] = coeff*f_b(x[i+1]);
   }
-  delete[] x;
 
   b[n-1] = 2;
   clock_t c_start = clock();
-
-
 
   for (int i = 1; i < n; i++){
     /*
@@ -209,21 +206,19 @@ double* general(int& n, double& time){
     b[i] -= c[i-1]*(a[i-1]/b[i-1]);
     b_v[i] -= b_v[i-1]*(a[i-1]/b[i-1]);
   }
-  delete[] a;
 
-  u[n-1] = b_v[n-1]/b[n-1];
+  u_g[n-1] = b_v[n-1]/b[n-1];
 
   for (int i = n-1; i > 0; i--){
     /*
     Backwards substitution
     */
-    u[i-1] = (b_v[i-1]-c[i-1]*u[i])/b[i-1];
+    u_g[i-1] = (b_v[i-1]-c[i-1]*u_g[i])/b[i-1];
   }
-  delete[] c, b_v;
   clock_t c_end = clock();
   time += (1000.0 * (c_end-c_start)/CLOCKS_PER_SEC);
 
-  return u;
+  return u_g;
 }
 
 double* special(int& n, double& time){
@@ -244,9 +239,8 @@ double* special(int& n, double& time){
     x[i+1] = x[i] + h;
     b_v[i+1] = coeff*f_b(x[i+1]);
   }
-  delete[] x;
 
-  double *d = new double[n], *u = new double[n];
+  double *d = new double[n], *u_s = new double[n];
 
   clock_t c_start = clock();
   d[0] = 2;
@@ -259,18 +253,17 @@ double* special(int& n, double& time){
     b_v[i] += b_v[i-1]/d[i-1];
   }
 
-  u[n-1] = b_v[n-1]/d[n-1];
+  u_s[n-1] = b_v[n-1]/d[n-1];
   for (int i = n-1; i > 0; i--){
     /*
     Backwards substitution
     */
-    u[i-1] = (b_v[i-1] + u[i])/d[i-1];
+    u_s[i-1] = (b_v[i-1] + u_s[i])/d[i-1];
   }
-  delete[] b_v, d;
   clock_t c_end = clock();
   time += (1000.0 * (c_end-c_start)/CLOCKS_PER_SEC);
 
-  return u;
+  return u_s;
 }
 
 double* relError(double* u, double* v, int& dim){
@@ -298,16 +291,15 @@ double* closedForm(int& n){
     x[i] = x[i-1] + h;
   }
 
-  double *u = new double[n];
+  double *u_c = new double[n];
   double temp = 1 - exp(-10);
   for (int i = 0; i < n; i++){
     /*
     Correct solution
     */
-    u[i] = 1 - temp*x[i] - exp(-10*x[i]);
+    u_c[i] = 1 - temp*x[i] - exp(-10*x[i]);
   }
-  delete[] x;
-  return u;
+  return u_c;
 }
 
 double maxValue(double* g, int& dim){
@@ -342,17 +334,17 @@ vec preBuilt(int& n){
   /*
   Solves the problem with armadillo methods
   */
+  unsigned int m = (unsigned int) n;
+  mat A(m,m), L, U;
+  A(0,0) = 2; A(0,1) = -1; A(m-1,m-2) = -1; A(m-1,m-1) = 2;
 
-  mat A(n,n), L, U;
-  A(0,0) = 2; A(0,1) = -1; A(n-1,n-2) = -1; A(n-1,n-1) = 2;
-
-  double h = 1./(n+1);
-  vec x(n), b_v(n); //Initializes vectors
+  double h = 1./(m + 1);
+  vec x(m), b_v(m); //Initializes vectors
   x[0] = h;
   double coeff = 100*h*h;
   b_v[0] = coeff*f_b(x[0]);
 
-  for (int i = 0; i< n-1; i++){
+  for (unsigned int i = 0; i < m-1; i++){
     /*
     Gives values to the right hand side vector.
     */
@@ -360,7 +352,7 @@ vec preBuilt(int& n){
     b_v[i+1] = coeff*f_b(x[i+1]);
   }
 
-  for (int i = 1; i < n-1; i++){
+  for (unsigned int i = 1; i < m-1; i++){
     /*
     Initializes the matrix
     */
@@ -389,8 +381,8 @@ void compareMethods(int& n){
     */
     v = general(n,time1);
     u = special(n,time2);
-    delete[] v;
     delete[] u;
+    delete[] v;
   }
 
   cout << "\nCPU time for general method: " << time1/1000 << "ms\n";
