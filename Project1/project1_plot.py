@@ -30,6 +30,7 @@ else:
     x = np.array([float((i+1)*hh) for i in range(len(u))])
 
 
+
     figurename1 = comparison_name.strip(".txt") + "n" + str(len(u)-2) + ".png"
     plt.plot(x, u, label="Numerical solution" + " n = " + str(len(x)-2))
     plt.plot(x, v, ":", label="Closed-form solution")
