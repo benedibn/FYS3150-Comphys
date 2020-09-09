@@ -8,15 +8,16 @@ using namespace std;
 using namespace arma;
 
 double f_b(double&);
-double* general(int&, double&);
-double* special(int&, double&);
+void general(double*, int&, double&);
+void special(double*, int&, double&);
 vec preBuilt(int&);
 int dimensionChoice();
-double* relError(double*, double*, int&);
-double* closedForm(int&);
+void relError(double*, double*, double*, int&);
+void closedForm(double*, int&);
 double maxValue(double*, int&);
 void writeFile(double*, double*, int&, ofstream&);
 void compareMethods(int&);
+
 
 int main(int argc, char const *argv[]){
   /*
@@ -46,10 +47,11 @@ int main(int argc, char const *argv[]){
     1 for comparing the closed form solution to the algorhitm of choice.
     1 for comparing the logaritmic absolute value of the error.
     */
-    double *v;
     double *u;
+    double *v;
     double *errList;
     double *nList;
+    double *eps;
     int input2, input3 = 0;
     cout << "What dimension matrix do you want to plot?\n";
     cout << "------------------------------------------\n";
@@ -87,18 +89,20 @@ int main(int argc, char const *argv[]){
       writes the error information
       */
       n = pow(10,i);
-
+      v = new double[n];
+      u = new double[n];
       if (input3 == 1){
-        v = general(n,time);
+        general(v,n,time);
         name = "ComparisonGeneral.txt";
         errorName = "ErrorGeneral.txt";
       }
       else{
-        v = special(n,time);
+        special(v,n,time);
         name = "ComparisonSpecial.txt";
         errorName = "ErrorSpecial.txt";
       }
-      u = closedForm(n);
+
+      closedForm(u,n);
 
       if (n == nPlot){
         /*
@@ -112,12 +116,13 @@ int main(int argc, char const *argv[]){
         myFile.close();
       }
       nList[i-1] = (double) n;
-      double* eps = relError(u,v,n);
+      eps = new double[n];
+      relError(eps,u,v,n);
       errList[i-1] = maxValue(eps,n);
+
       delete[] eps;
       delete[] u;
       delete[] v;
-
     }
     myFile2.open(errorName);
     writeFile(nList, errList, nPow,myFile2);
@@ -177,7 +182,7 @@ int dimensionChoice(){
   }
   return n;
 }
-double* general(int& n, double& time){
+void general(double* v_g, int& n, double& time){
   /*
   Solves the problem with a method that knows the matix is tridiagonal,
   but treats the values on these diagonals like different values.
@@ -186,7 +191,7 @@ double* general(int& n, double& time){
   double h = 1./(1.+n);
 
   double *a = new double[n-1], *b = new double[n], *c = new double[n-1];
-  double *x = new double[n], *b_v = new double[n], *u_g = new double[n];//Initializes vectors
+  double *x = new double[n], *b_v = new double[n];//Initializes vectors
   x[0] = h;
   double coeff = 100*h*h;
 
@@ -215,24 +220,22 @@ double* general(int& n, double& time){
     b_v[i] -= b_v[i-1]*(a[i-1]/b[i-1]);
   }
   delete[] a;
-  u_g[n-1] = b_v[n-1]/b[n-1];
+  v_g[n-1] = b_v[n-1]/b[n-1];
 
   for (int i = n-1; i > 0; i--){
     /*
     Backwards substitution
     */
-    u_g[i-1] = (b_v[i-1]-c[i-1]*u_g[i])/b[i-1];
+    v_g[i-1] = (b_v[i-1]-c[i-1]*v_g[i])/b[i-1];
   }
   delete[] c;
   delete[] b;
   delete[] b_v;
   clock_t c_end = clock();
   time += (1000.0 * (c_end-c_start)/CLOCKS_PER_SEC);
-
-  return u_g;
 }
 
-double* special(int& n, double& time){
+void special(double* v_s, int& n, double& time){
   /*
   Solves the problem where all elements in the vectors making up the diagonals are the same
   */
@@ -252,7 +255,7 @@ double* special(int& n, double& time){
   }
   delete[] x;
 
-  double *d = new double[n], *u_s = new double[n];
+  double *d = new double[n];
 
   clock_t c_start = clock();
   d[0] = 2;
@@ -265,33 +268,30 @@ double* special(int& n, double& time){
     b_v[i] += b_v[i-1]/d[i-1];
   }
 
-  u_s[n-1] = b_v[n-1]/d[n-1];
+  v_s[n-1] = b_v[n-1]/d[n-1];
   for (int i = n-1; i > 0; i--){
     /*
     Backwards substitution
     */
-    u_s[i-1] = (b_v[i-1] + u_s[i])/d[i-1];
+    v_s[i-1] = (b_v[i-1] + v_s[i])/d[i-1];
   }
   delete[] d;
   delete[] b_v;
   clock_t c_end = clock();
   time += (1000.0 * (c_end-c_start)/CLOCKS_PER_SEC);
 
-  return u_s;
 }
 
-double* relError(double* u, double* v, int& dim){
+void relError(double* eps,double* u, double* v, int& n){
   /*
   Returns the logaritmic relative error between two vectors
   */
-  int n = dim;
-  double *epsilon = new double[n];
+
   for (int i = 0; i < n; i++){
-    epsilon[i] = log10(abs((v[i]-u[i])/u[i]));
+    eps[i] = log10(abs((v[i]-u[i])/u[i]));
   }
-  return epsilon;
 }
-double* closedForm(int& n){
+void closedForm(double* u_c,int& n){
   /*
   Returns a vector that correspond to the exact solution (although quantified).
   */
@@ -302,10 +302,8 @@ double* closedForm(int& n){
     /*
     linspace
     */
-    x_c[i] = x_c[i-1] + h;
+    x_c[i] = (i+1)*h;
   }
-
-  double *u_c = new double[n];
   double temp = 1 - exp(-10);
   for (int i = 0; i < n; i++){
     /*
@@ -314,7 +312,6 @@ double* closedForm(int& n){
     u_c[i] = 1 - temp*x_c[i] - exp(-10*x_c[i]);
   }
   delete[] x_c;
-  return u_c;
 }
 
 double maxValue(double* g, int& dim){
@@ -388,16 +385,18 @@ void compareMethods(int& n){
   */
   double time1 = 0;
   double time2 = 0;
-  double *u, *v;
+  double *v1, *v2;
 
   for (int i = 0; i < 1000; i++){
     /*
     Adds the time of running the funcions once. This is average over when printed
     */
-    v = general(n,time1);
-    u = special(n,time2);
-    delete[] v;
-    delete[] u;
+    v1 = new double[n];
+    v2 = new double[n];
+    general(v1,n,time1);
+    special(v2,n,time2);
+    delete []v1;
+    delete []v2;
   }
 
   cout << "\nCPU time for general method: " << time1/1000 << "ms\n";
