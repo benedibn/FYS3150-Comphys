@@ -112,12 +112,18 @@ int main(int argc, char const *argv[]){
         myFile.close();
       }
       nList[i-1] = (double) n;
-      errList[i-1] = maxValue(relError(u,v,n),n);
+      double* eps = relError(u,v,n);
+      errList[i-1] = maxValue(eps,n);
+      delete[] eps;
 
     }
     myFile2.open(errorName);
     writeFile(nList, errList, nPow,myFile2);
     myFile2.close();
+    delete[] nList;
+    delete[] errList;
+    delete[] u;
+    delete[] v;
   }
 
   return 0;
@@ -195,6 +201,7 @@ double* general(int& n, double& time){
     x[i+1] = x[i] + h;
     b_v[i+1] = coeff*f_b(x[i+1]);
   }
+  delete[] x;
 
   b[n-1] = 2;
   clock_t c_start = clock();
@@ -206,7 +213,7 @@ double* general(int& n, double& time){
     b[i] -= c[i-1]*(a[i-1]/b[i-1]);
     b_v[i] -= b_v[i-1]*(a[i-1]/b[i-1]);
   }
-
+  delete[] a;
   u_g[n-1] = b_v[n-1]/b[n-1];
 
   for (int i = n-1; i > 0; i--){
@@ -215,6 +222,9 @@ double* general(int& n, double& time){
     */
     u_g[i-1] = (b_v[i-1]-c[i-1]*u_g[i])/b[i-1];
   }
+  delete[] c;
+  delete[] b;
+  delete[] b_v;
   clock_t c_end = clock();
   time += (1000.0 * (c_end-c_start)/CLOCKS_PER_SEC);
 
@@ -239,6 +249,7 @@ double* special(int& n, double& time){
     x[i+1] = x[i] + h;
     b_v[i+1] = coeff*f_b(x[i+1]);
   }
+  delete[] x;
 
   double *d = new double[n], *u_s = new double[n];
 
@@ -260,6 +271,8 @@ double* special(int& n, double& time){
     */
     u_s[i-1] = (b_v[i-1] + u_s[i])/d[i-1];
   }
+  delete[] d;
+  delete[] b_v;
   clock_t c_end = clock();
   time += (1000.0 * (c_end-c_start)/CLOCKS_PER_SEC);
 
@@ -271,7 +284,7 @@ double* relError(double* u, double* v, int& dim){
   Returns the logaritmic relative error between two vectors
   */
   int n = dim;
-  double *epsilon= new double[n];
+  double *epsilon = new double[n];
   for (int i = 0; i < n; i++){
     epsilon[i] = log10(abs((v[i]-u[i])/u[i]));
   }
@@ -282,13 +295,13 @@ double* closedForm(int& n){
   Returns a vector that correspond to the exact solution (although quantified).
   */
   double h = 1./(n+1);
-  double* x = new double[n];
-  x[0] = h;
+  double* x_c = new double[n];
+  x_c[0] = h;
   for (int i = 0; i < n; i++){
     /*
     linspace
     */
-    x[i] = x[i-1] + h;
+    x_c[i] = x_c[i-1] + h;
   }
 
   double *u_c = new double[n];
@@ -297,8 +310,9 @@ double* closedForm(int& n){
     /*
     Correct solution
     */
-    u_c[i] = 1 - temp*x[i] - exp(-10*x[i]);
+    u_c[i] = 1 - temp*x_c[i] - exp(-10*x_c[i]);
   }
+  delete[] x_c;
   return u_c;
 }
 
@@ -373,7 +387,7 @@ void compareMethods(int& n){
   */
   double time1 = 0;
   double time2 = 0;
-  double *u = new double[n], *v = new double[n];
+  double *u, *v;
 
   for (int i = 0; i < 1000; i++){
     /*
@@ -381,8 +395,8 @@ void compareMethods(int& n){
     */
     v = general(n,time1);
     u = special(n,time2);
-    delete[] u;
     delete[] v;
+    delete[] u;
   }
 
   cout << "\nCPU time for general method: " << time1/1000 << "ms\n";
