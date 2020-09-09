@@ -94,10 +94,6 @@ int main(int argc, char const *argv[]){
         errorName = "ErrorSpecial.txt";
       }
 
-<<<<<<< HEAD
-      v = general(n);
-=======
->>>>>>> 284b14cfb49b4777b0f2f29dcc1d6b834b8478d0
       u = closedForm(n);
 
       if (n == nPlot){
@@ -109,7 +105,7 @@ int main(int argc, char const *argv[]){
       nList[i-1] = (double) n;
       errList[i-1] = maxValue(relError(u,v,n),n);
       writeFile(nList, errList, errorName, nPow);
-      delete[] u,v,nList,errList;
+      //delete[] u,v,nList,errList;
     }
   }
 
@@ -253,14 +249,10 @@ double* special(int& n, double& time){
 
   u[n-1] = b_v[n-1]/d[n-1];
   for (int i = n-1; i > 0; i--){
-<<<<<<< HEAD
-    u[i-1] = (b_v[i-1] + u[i])/d[i];
-=======
     /*
     Backwards substitution
     */
     u[i-1] = (b_v[i-1] + u[i])/d[i-1];
->>>>>>> 284b14cfb49b4777b0f2f29dcc1d6b834b8478d0
   }
   clock_t c_end = clock();
   time += (1000.0 * (c_end-c_start)/CLOCKS_PER_SEC);
