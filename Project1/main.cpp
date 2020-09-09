@@ -46,8 +46,8 @@ int main(int argc, char const *argv[]){
     1 for comparing the closed form solution to the algorhitm of choice.
     1 for comparing the logaritmic absolute value of the error.
     */
-    double *u;
     double *v;
+    double *u;
     double *errList;
     double *nList;
     int input2, input3 = 0;
@@ -115,6 +115,8 @@ int main(int argc, char const *argv[]){
       double* eps = relError(u,v,n);
       errList[i-1] = maxValue(eps,n);
       delete[] eps;
+      delete[] u;
+      delete[] v;
 
     }
     myFile2.open(errorName);
@@ -122,8 +124,7 @@ int main(int argc, char const *argv[]){
     myFile2.close();
     delete[] nList;
     delete[] errList;
-    delete[] u;
-    delete[] v;
+
   }
 
   return 0;
