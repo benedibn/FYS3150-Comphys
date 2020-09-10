@@ -32,9 +32,14 @@ else:
 
 
     figurename1 = comparison_name.strip(".txt") + "n" + str(len(u)-2) + ".png"
+    if comparison_name == "ComparisonSpecial.txt":
+        title = "Special algorithm"
+    elif comparison_name == "ComparisonGeneral.txt":
+        title = "General algorithm"
     plt.plot(x, u, label="Numerical solution" + " n = " + str(len(x)-2))
     plt.plot(x, v, ":", label="Closed-form solution")
     plt.legend()
+    plt.title(title)
     plt.xlabel("x")
     plt.ylabel("u(x)")
     plt.savefig(figurename1)
@@ -45,6 +50,7 @@ else:
 
     figurename2 = error_name.strip(".txt") + ".png"
     plt.plot(np.log10(h),eps)
+    plt.title(title)
     plt.xlabel("log10(h)")
     plt.ylabel("log10(max_error)")
     plt.savefig(figurename2)
