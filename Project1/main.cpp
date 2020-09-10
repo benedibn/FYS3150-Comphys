@@ -239,7 +239,6 @@ void special(double* v_s, int& n, double& time){
   /*
   Solves the problem where all elements in the vectors making up the diagonals are the same
   */
-
   double h = 1./(1+n);
   double *x = new double[n], *b_v = new double[n]; //Initializes vectors
   x[0] = h;
@@ -264,7 +263,7 @@ void special(double* v_s, int& n, double& time){
     /*
     Gives new values to the diagonal vector and the right hand side according to row reduction
     */
-    d[i] = (i+2.)/(i+1.);
+    d[i] = (i+2.)/(i+1);
     b_v[i] += b_v[i-1]/d[i-1];
   }
 
@@ -279,7 +278,6 @@ void special(double* v_s, int& n, double& time){
   delete[] b_v;
   clock_t c_end = clock();
   time += (1000.0 * (c_end-c_start)/CLOCKS_PER_SEC);
-
 }
 
 void relError(double* eps,double* u, double* v, int& n){
@@ -339,7 +337,6 @@ void writeFile(double* v, double* u, int& dim, ofstream& aFile){
     */
     aFile << v[i] << " " << u[i] << endl;
   }
-
 }
 
 vec preBuilt(int& n){
@@ -404,7 +401,7 @@ void compareMethods(int& n){
 
 
   cout << "CPU time for special method: " << time2/1000 << "ms\n";
-  cout << "The special method used: " << 4*n - 1 << " floating point operations \n\n";
+  cout << "The special method used: " << 4*n - 3 << " floating point operations \n\n";
 
   if (n > 1000){
     /*
