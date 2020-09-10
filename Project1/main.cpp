@@ -114,12 +114,7 @@ int main(int argc, char const *argv[]){
       }
       nList[i-1] = (double) n;
       errList[i-1] = maxValue(relError(u,v,n),n);
-<<<<<<< HEAD
-      writeFile(nList, errList, errorName, nPow);
-      //delete[] u,v,nList,errList;
-=======
 
->>>>>>> bcf6c5b31aef7f763e2039e91637633346006dce
     }
     ofstream myFile2;
     myFile2.open(errorName);
