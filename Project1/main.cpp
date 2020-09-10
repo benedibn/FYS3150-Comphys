@@ -8,20 +8,22 @@ using namespace std;
 using namespace arma;
 
 double f_b(double&);
-double* general(int&, double&);
-double* special(int&, double&);
+void general(double*, int&, double&);
+void special(double*, int&, double&);
 vec preBuilt(int&);
 int dimensionChoice();
-double* relError(double*, double*, int&);
-double* closedForm(int&);
+void relError(double*, double*, double*, int&);
+void closedForm(double*, int&);
 double maxValue(double*, int&);
 void writeFile(double*, double*, int&, ofstream&);
 void compareMethods(int&);
+
 
 int main(int argc, char const *argv[]){
   /*
   Main function
   */
+  (void) argc; (void) argv;
   cout << "Do you want to to compare methods or run the program? \n";
   cout << "--------------------------------------------------------\n";
   cout << "1: Compare methods\n";
@@ -49,6 +51,7 @@ int main(int argc, char const *argv[]){
     double *v;
     double *errList;
     double *nList;
+    double *eps;
     int input2, input3 = 0;
     cout << "What dimension matrix do you want to plot?\n";
     cout << "------------------------------------------\n";
@@ -61,7 +64,7 @@ int main(int argc, char const *argv[]){
     cout << "Input: ";
     cin >> input2;
     int nPlot = pow(10,input2);
-    double maxError;
+
     int nPow = 7;
     nList = new double[nPow];
     errList = new double[nPow];
@@ -80,32 +83,32 @@ int main(int argc, char const *argv[]){
 
     string name, errorName;
     double time = 0.0;
+    ofstream myFile, myFile2;
     for (int i = 1; i < (nPow+1); i++){
       /*
       writes the error information
       */
       n = pow(10,i);
-
+      v = new double[n];
+      u = new double[n];
       if (input3 == 1){
-        v = general(n,time);
+        general(v,n,time);
         name = "ComparisonGeneral.txt";
         errorName = "ErrorGeneral.txt";
       }
-      else if (input3 == 2){
-        v = special(n,time);
+      else{
+        special(v,n,time);
         name = "ComparisonSpecial.txt";
         errorName = "ErrorSpecial.txt";
       }
-      else{cout << "Something went wrong!\n"; return 1;}
 
-      u = closedForm(n);
-
+      closedForm(u,n);
 
       if (n == nPlot){
         /*
         chooses which file is written for plotting
         */
-        ofstream myFile;
+
         myFile.open(name);
         myFile << 0 << " " << 0 << endl;
         writeFile(v,u,n,myFile);
@@ -113,14 +116,20 @@ int main(int argc, char const *argv[]){
         myFile.close();
       }
       nList[i-1] = (double) n;
-      errList[i-1] = maxValue(relError(u,v,n),n);
+      eps = new double[n];
+      relError(eps,u,v,n);
+      errList[i-1] = maxValue(eps,n);
 
+      delete[] eps;
+      delete[] u;
+      delete[] v;
     }
-    ofstream myFile2;
     myFile2.open(errorName);
     writeFile(nList, errList, nPow,myFile2);
     myFile2.close();
-    delete[] u,v,nList,errList;
+    delete[] nList;
+    delete[] errList;
+
   }
 
   return 0;
@@ -173,7 +182,7 @@ int dimensionChoice(){
   }
   return n;
 }
-double* general(int& n, double& time){
+void general(double* v_g, int& n, double& time){
   /*
   Solves the problem with a method that knows the matix is tridiagonal,
   but treats the values on these diagonals like different values.
@@ -182,7 +191,7 @@ double* general(int& n, double& time){
   double h = 1./(1.+n);
 
   double *a = new double[n-1], *b = new double[n], *c = new double[n-1];
-  double *x = new double[n], *b_v = new double[n], *u = new double[n];//Initializes vectors
+  double *x = new double[n], *b_v = new double[n];//Initializes vectors
   x[0] = h;
   double coeff = 100*h*h;
 
@@ -203,8 +212,6 @@ double* general(int& n, double& time){
   b[n-1] = 2;
   clock_t c_start = clock();
 
-
-
   for (int i = 1; i < n; i++){
     /*
     Gives new values to the diagonal vector and the right hand side according to row reduction
@@ -213,22 +220,22 @@ double* general(int& n, double& time){
     b_v[i] -= b_v[i-1]*(a[i-1]/b[i-1]);
   }
   delete[] a;
-
-  u[n-1] = b_v[n-1]/b[n-1];
+  v_g[n-1] = b_v[n-1]/b[n-1];
 
   for (int i = n-1; i > 0; i--){
     /*
     Backwards substitution
     */
-    u[i-1] = (b_v[i-1]-c[i-1]*u[i])/b[i-1];
+    v_g[i-1] = (b_v[i-1]-c[i-1]*v_g[i])/b[i-1];
   }
+  delete[] c;
+  delete[] b;
+  delete[] b_v;
   clock_t c_end = clock();
   time += (1000.0 * (c_end-c_start)/CLOCKS_PER_SEC);
-
-  return u;
 }
 
-double* special(int& n, double& time){
+void special(double* v_s, int& n, double& time){
   /*
   Solves the problem where all elements in the vectors making up the diagonals are the same
   */
@@ -248,7 +255,7 @@ double* special(int& n, double& time){
   }
   delete[] x;
 
-  double *d = new double[n], *u = new double[n];
+  double *d = new double[n];
 
   clock_t c_start = clock();
   d[0] = 2;
@@ -261,53 +268,50 @@ double* special(int& n, double& time){
     b_v[i] += b_v[i-1]/d[i];
   }
 
-  u[n-1] = b_v[n-1]/d[n-1];
+  v_s[n-1] = b_v[n-1]/d[n-1];
   for (int i = n-1; i > 0; i--){
     /*
     Backwards substitution
     */
-    u[i-1] = (b_v[i-1] + u[i])/d[i-1];
+    v_s[i-1] = (b_v[i-1] + v_s[i])/d[i-1];
   }
+  delete[] d;
+  delete[] b_v;
   clock_t c_end = clock();
   time += (1000.0 * (c_end-c_start)/CLOCKS_PER_SEC);
 
-  return u;
 }
 
-double* relError(double* u, double* v, int& dim){
+void relError(double* eps,double* u, double* v, int& n){
   /*
   Returns the logaritmic relative error between two vectors
   */
-  int n = dim;
-  double *epsilon= new double[n];
+
   for (int i = 0; i < n; i++){
-    epsilon[i] = log10(abs((v[i]-u[i])/u[i]));
+    eps[i] = log10(abs((v[i]-u[i])/u[i]));
   }
-  return epsilon;
 }
-double* closedForm(int& n){
+void closedForm(double* u_c,int& n){
   /*
   Returns a vector that correspond to the exact solution (although quantified).
   */
   double h = 1./(n+1);
-  double* x = new double[n];
-  x[0] = h;
+  double* x_c = new double[n];
+  x_c[0] = h;
   for (int i = 0; i < n; i++){
     /*
     linspace
     */
-    x[i] = x[i-1] + h;
+    x_c[i] = (i+1)*h;
   }
-
-  double *u = new double[n];
   double temp = 1 - exp(-10);
   for (int i = 0; i < n; i++){
     /*
     Correct solution
     */
-    u[i] = 1 - temp*x[i] - exp(-10*x[i]);
+    u_c[i] = 1 - temp*x_c[i] - exp(-10*x_c[i]);
   }
-  return u;
+  delete[] x_c;
 }
 
 double maxValue(double* g, int& dim){
@@ -342,17 +346,17 @@ vec preBuilt(int& n){
   /*
   Solves the problem with armadillo methods
   */
+  unsigned int m = (unsigned int) n;
+  mat A(m,m), L, U;
+  A(0,0) = 2; A(0,1) = -1; A(m-1,m-2) = -1; A(m-1,m-1) = 2;
 
-  mat A(n,n), L, U;
-  A(0,0) = 2; A(0,1) = -1; A(n-1,n-2) = -1; A(n-1,n-1) = 2;
-
-  double h = 1./(n+1);
-  vec x(n), b_v(n); //Initializes vectors
+  double h = 1./(m + 1);
+  vec x(m), b_v(m); //Initializes vectors
   x[0] = h;
   double coeff = 100*h*h;
   b_v[0] = coeff*f_b(x[0]);
 
-  for (int i = 0; i< n-1; i++){
+  for (unsigned int i = 0; i < m-1; i++){
     /*
     Gives values to the right hand side vector.
     */
@@ -360,7 +364,7 @@ vec preBuilt(int& n){
     b_v[i+1] = coeff*f_b(x[i+1]);
   }
 
-  for (int i = 1; i < n-1; i++){
+  for (unsigned int i = 1; i < m-1; i++){
     /*
     Initializes the matrix
     */
@@ -381,16 +385,18 @@ void compareMethods(int& n){
   */
   double time1 = 0;
   double time2 = 0;
-  double *u = new double[n], *v = new double[n];
+  double *v1, *v2;
 
   for (int i = 0; i < 1000; i++){
     /*
     Adds the time of running the funcions once. This is average over when printed
     */
-    v = general(n,time1);
-    u = special(n,time2);
-    delete[] v;
-    delete[] u;
+    v1 = new double[n];
+    v2 = new double[n];
+    general(v1,n,time1);
+    special(v2,n,time2);
+    delete []v1;
+    delete []v2;
   }
 
   cout << "\nCPU time for general method: " << time1/1000 << "ms\n";
