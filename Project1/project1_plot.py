@@ -30,10 +30,23 @@ else:
     x = np.array([float((i+1)*hh) for i in range(len(u))])
 
 
+<<<<<<< HEAD
     figurename1 = comparison_name.strip(".txt") + "n" + str(len(u)-1) + ".png"
     plt.plot(x, u, label="Numerical solution" + " n = " + str(len(x)-1))
+=======
+
+    figurename1 = comparison_name.strip(".txt") + "n" + str(len(u)-2) + ".png"
+    if comparison_name == "ComparisonSpecial.txt":
+        title = "Special algorithm"
+    elif comparison_name == "ComparisonGeneral.txt":
+        title = "General algorithm"
+    else:
+        title = ""
+    plt.plot(x, u, label="Numerical solution" + " n = " + str(len(x)-2))
+>>>>>>> a450839236eeb16f6bd0785ae928a1c49fa82e3b
     plt.plot(x, v, ":", label="Closed-form solution")
     plt.legend()
+    plt.title(title)
     plt.xlabel("x")
     plt.ylabel("u(x)")
     plt.savefig(figurename1)
@@ -44,6 +57,7 @@ else:
 
     figurename2 = error_name.strip(".txt") + ".png"
     plt.plot(np.log10(h),eps)
+    plt.title(title)
     plt.xlabel("log10(h)")
     plt.ylabel("log10(max_error)")
     plt.savefig(figurename2)
