@@ -36,6 +36,8 @@ else:
         title = "Special algorithm"
     elif comparison_name == "ComparisonGeneral.txt":
         title = "General algorithm"
+    else:
+        title = ""
     plt.plot(x, u, label="Numerical solution" + " n = " + str(len(x)-2))
     plt.plot(x, v, ":", label="Closed-form solution")
     plt.legend()
