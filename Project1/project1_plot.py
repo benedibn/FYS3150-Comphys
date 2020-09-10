@@ -29,11 +29,9 @@ else:
     v = np.array(v)
     x = np.array([float((i+1)*hh) for i in range(len(u))])
 
-    print(len(x))
-    print(len(u))
 
-    figurename1 = comparison_name.strip(".txt") + "n" + str(len(u)) + ".png"
-    plt.plot(x, u, label="Numerical solution" + " n = " + str(len(x)))
+    figurename1 = comparison_name.strip(".txt") + "n" + str(len(u)-1) + ".png"
+    plt.plot(x, u, label="Numerical solution" + " n = " + str(len(x)-1))
     plt.plot(x, v, ":", label="Closed-form solution")
     plt.legend()
     plt.xlabel("x")
