@@ -263,13 +263,8 @@ void special(double* v_s, int& n, double& time){
     /*
     Gives new values to the diagonal vector and the right hand side according to row reduction
     */
-<<<<<<< HEAD
-    d[i] = (i+2.)/(i+1.);
-    b_v[i] += b_v[i-1]/d[i];
-=======
     d[i] = (i+2.)/(i+1);
     b_v[i] += b_v[i-1]/d[i-1];
->>>>>>> 3024e5d3686330b28f69e398385607043a72687a
   }
 
   v_s[n-1] = b_v[n-1]/d[n-1];
