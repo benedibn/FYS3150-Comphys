@@ -1,4 +1,5 @@
 #include "EigenValueSolver.hpp"
+<<<<<<< HEAD
 
 
 void TridiagonalMatrixSolver::initialize(int N, double lambda)
@@ -18,4 +19,23 @@ void TridiagonalMatrixSolver::write_to_file(string filename)
     m_ofile << m_x(i) << " " << m_v(i) << endl;
   }
   m_ofile.close();
+=======
+#include <armadillo>
+#include <fstream>
+
+using namespace std;
+using namespace arma;
+
+EigenValueSolver::EigenValueSolver(double a, double d, int N){
+  /*Initializes the matrix*/
+  m_N = N;
+  m_A = mat(m_N,m_N,fill::zeros);
+  m_A(0,0) = d; m_A(0,1) = a;
+  m_A(m_N-1,m_N-1) = d; m_A(m_N-1,m_N-2) = a;
+  for (int i = 1; i < m_N - 1; i++){
+    m_A(i,i) = d;
+    m_A(i,i-1) = a;
+    m_A(i,i+1) = a;
+  }
+>>>>>>> 7d56601e0e21ce58f22707d3a2e2283f4dcf8ffd
 }

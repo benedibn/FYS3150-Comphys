@@ -4,42 +4,19 @@
 
 using namespace std;
 using namespace arma;
+using namespace tFunk;
 
-
-TriMat::TriMat(int a, int d, int N){
-  /*Initializes the matrix*/
-  m_a = a;
-  m_d = d;
-  m_N = N;
-}
-vec TriMat::findEigenValues(){
-  /*returns a vector of eigenvalues*/
-  mat A(m_N,m_N,fill::zeros);
-  A(0,0) = m_d; A(0,1) = m_a;
-  A(m_N-1,m_N-1) = m_d; A(m_N-1,m_N-2) = m_a;
-  for (int i = 1; i < m_N - 1; i++){
-    A(i,i) = m_d;
-    A(i,i-1) = m_a;
-    A(i,i+1) = m_a;
-  }
-  vec diag(m_N);
-  return eig_sym(A);
+vec JacobiSolver::solve(){
+  return solve(1000);
 }
 
-vec TriMat::jacobiEigen(int n){
+vec JacobiSolver::solve(int n){
   /*Find approximate eigenvalues by using Jacobis method*/
-  mat A(m_N,m_N,fill::zeros);
-  A(0,0) = m_d; A(m_N-1,m_N-1) = m_d;
-  A(0,1) = m_a; A(m_N-1,m_N-2) = m_a;
+  mat A = m_A;
   vec tempVec;
   rowvec tempRow;
   double tol = pow(10.,-8);
-  for (int i = 1; i < m_N-1; i++){
-    /*Fills the diagonal and sub/superdiagonals*/
-    A(i,i) = m_d;
-    A(i,i+1) = m_a;
-    A(i,i-1) = m_a;
-  }
+
   int maxi = 0, maxj = 0;
   double maxa;
   double c, s;
@@ -75,8 +52,6 @@ vec TriMat::jacobiEigen(int n){
     /*
     The next section corresponds to the matrix mulitplication S^T(AS)
     */
-
-
     tempRow = A.row(maxi);
     A.row(maxi) *= c;
     A.row(maxi) -= s*A.row(maxj);
@@ -88,5 +63,12 @@ vec TriMat::jacobiEigen(int n){
   for (int i = 0; i < m_N; i++){
     lambda(i) = A(i,i);
   }
-  return lambda;
+  return sort(lambda);
+}
+
+void JacobiSolver::findCS(double& d1, double& d2, double& a, double& c, double& s){
+  double tau = (d1-d2)/(2*a);
+  double t = -tau + sign(tau)*sqrt(1+pow(tau,2));
+  c = 1/(sqrt(1+pow(t,2)));
+  s = c*t;
 }
