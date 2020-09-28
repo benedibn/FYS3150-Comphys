@@ -32,6 +32,7 @@ vec TriMat::jacobiEigen(int n){
   A(0,0) = m_d; A(m_N-1,m_N-1) = m_d;
   A(0,1) = m_a; A(m_N-1,m_N-2) = m_a;
   vec tempVec;
+  rowvec tempRow;
   double tol = pow(10.,-8);
   for (int i = 1; i < m_N-1; i++){
     /*Fills the diagonal and sub/superdiagonals*/
@@ -75,13 +76,13 @@ vec TriMat::jacobiEigen(int n){
     The next section corresponds to the matrix mulitplication S^T(AS)
     */
 
-    /*
-    tempVec = A.row(maxi);
+
+    tempRow = A.row(maxi);
     A.row(maxi) *= c;
     A.row(maxi) -= s*A.row(maxj);
     A.row(maxj) *= c;
-    A.row(maxj) += s*tempVec;
-    */
+    A.row(maxj) += s*tempRow;
+
   }
   vec lambda(m_N);
   for (int i = 0; i < m_N; i++){
