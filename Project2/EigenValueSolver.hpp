@@ -14,6 +14,7 @@ protected:
 
 public:
   EigenValueSolver(double, double, int);
+  EigenValueSolver(vec,vec);
   //void writeToFile();
 };
 
@@ -24,6 +25,9 @@ public:
   JacobiSolver(double a, double d, int N) : EigenValueSolver(a, d, N){
     cout << "made jacobi solver \n";
   };
+  JacobiSolver(vec a, vec d) : EigenValueSolver(a, d){
+    cout << "made jacobi solver \n";
+  };
   vec solve(int);
   vec solve();
 };
@@ -31,6 +35,9 @@ public:
 class ArmaSolver : public EigenValueSolver{
 public:
   ArmaSolver(double a, double d, int N) : EigenValueSolver(a, d, N){
+    cout << "made arma solver\n";
+  };
+  ArmaSolver(vec a, vec d) : EigenValueSolver(a, d){
     cout << "made arma solver\n";
   };
   vec solve();
