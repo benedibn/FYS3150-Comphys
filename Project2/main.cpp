@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-#include <cmath>
-#include <string>
-#include <time.h>
-#include <armadillo>
-
-using namespace arma;
-=======
 #include "EigenValueSolver.hpp"
 #include <fstream>
 #include <armadillo>
@@ -34,4 +26,3 @@ int main(int argc, char const *argv[]){
 
   return 0;
 }
->>>>>>> 645e47d634b316a74a4dbbad89e0b6556aee8d38
