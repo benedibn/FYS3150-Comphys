@@ -3,18 +3,17 @@
 #include <fstream>
 #include <armadillo>
 
-
 using namespace std;
 using namespace arma;
 
-class TriMat{
-private:
+class EigenValueSolver{
+protected:
   int m_N;
   double m_a;
   double m_d;
 
 public:
-  TriMat(int, int, int);
+  EigenValueSolver(int, int, int);
   vec findEigenValues();
   vec jacobiEigen(int);
 };
