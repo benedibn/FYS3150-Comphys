@@ -7,33 +7,50 @@
 using namespace std;
 using namespace arma;
 
-class TriMat{
-private:
+class EigenValueSolver{
+protected:
   int m_N;
-  double m_a;
-  double m_d;
+  mat m_A;
 
 public:
-  TriMat(int, int, int);
-  vec findEigenValues();
-  vec jacobiEigen(int);
+  EigenValueSolver(double, double, int);
+  EigenValueSolver(vec,vec);
+  //void writeToFile();
 };
 
+class JacobiSolver : public EigenValueSolver{
+private:
+  void findCS(double&, double&, double&, double&, double&);
+public:
+  JacobiSolver(double a, double d, int N) : EigenValueSolver(a, d, N){
+    cout << "made jacobi solver \n";
+  };
+  JacobiSolver(vec a, vec d) : EigenValueSolver(a, d){
+    cout << "made jacobi solver \n";
+  };
+  vec solve(int);
+  vec solve();
+};
 
-void findCS(double&, double&, double&, double&, double&);
-int sign(double&);
+class ArmaSolver : public EigenValueSolver{
+public:
+  ArmaSolver(double a, double d, int N) : EigenValueSolver(a, d, N){
+    cout << "made arma solver\n";
+  };
+  ArmaSolver(vec a, vec d) : EigenValueSolver(a, d){
+    cout << "made arma solver\n";
+  };
+  vec solve();
+};
 
-
-
-
-
-
-
-
-
-
-
-
+namespace tFunk{
+  int sign(double& x){
+    if (x < 0){
+      return -1;
+    }
+    return 1;
+  }
+}
 
 
 
