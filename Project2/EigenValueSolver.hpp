@@ -12,12 +12,16 @@ private:
   int m_N;
   double m_a;
   double m_d;
+
 public:
   TriMat(int, int, int);
   vec findEigenValues();
+  vec jacobiEigen(int);
 };
 
 
+void findCS(double&, double&, double&, double&, double&);
+int sign(double&);
 
 
 
