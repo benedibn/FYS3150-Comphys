@@ -27,10 +27,10 @@ vec JacobiSolver::solve(int n){
       /*Loops over all rows except the last one*/
       for (int j = i+1; j < m_N; j++){
         /*Loops over all elements to the right of the diagonal in a given row*/
-        if (abs(A[i,j]) > abs(maxa)){
+        if (abs(A(i,j)) > abs(maxa)){
           maxi = i;
           maxj = j;
-          maxa = A[maxi,maxj];
+          maxa = A(maxi,maxj);
         }
       }
     }
