@@ -1,28 +1,40 @@
 #include "EigenValueSolver.hpp"
 #include <fstream>
 #include <armadillo>
-#include "TriMat.cpp"
-#include "functions.cpp"
+#include "EigenValueSolver.cpp"
+#include "JacobiSolver.cpp"
+#include "ArmaSolver.cpp"
 
 using namespace std;
 using namespace arma;
 
 int main(int argc, char const *argv[]){
-  double d = 2.;
-  double a = -1.;
-  int N = 2;
-  TriMat aTriMat(a,d,N);
-  vec eigen(N);
-  vec eigen2(N);
-  eigen = aTriMat.findEigenValues();
-  for (int i = 0; i < N; i++){
-    cout << eigen(i) << endl;
+  (void) argc; (void) argv;
+
+  int N = 6;
+  double a = -1;
+  double d = 2;
+
+  vec va(N-1,fill::ones);
+  va *= a;
+  vec vd(N,fill::ones);
+  vd *= d;
+
+  string fileName = "Eigenvalue.txt";
+  ofstream file;
+  file.open(fileName);
+
+
+  for (int i = 3; i < 10; i++){
+    JacobiSolver J(a,d,i);
+    J.solve();
+    J.writeToFile(file);
+    J.~JacobiSolver();
   }
-  cout << "------------------------------\n";
-  eigen2 = aTriMat.jacobiEigen(10);
-  for (int i = 0; i < N; i++){
-    cout << eigen2(i) << endl;
-  }
+
+
+  file.close();
+
 
   return 0;
 }
