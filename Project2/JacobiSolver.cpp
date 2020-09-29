@@ -36,7 +36,7 @@ vec JacobiSolver::solve(){
       for (int j = i+1; j < m_N; j++){
         /*Loops over all elements to the right of the diagonal in a given row*/
         if (abs(A(i,j)) > abs(maxa)){
-          maxi =  i;
+          maxi = i;
           maxj = j;
           maxa = A(i,j);
         }
