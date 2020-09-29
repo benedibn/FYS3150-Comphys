@@ -16,6 +16,7 @@ protected:
 
   EigenValueSolver(vec,vec);
   EigenValueSolver(double, double, int);
+  mat initialize(vec,vec);
 
 public:
   void writeToFile(ofstream&);
