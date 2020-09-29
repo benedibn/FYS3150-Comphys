@@ -43,8 +43,10 @@ vec JacobiSolver::solve(){
       }
     }
     if (pow(maxa,2) < tol){
+      /*
       cout << "The Jacobi method needed " << k << " iterations to make the off diagonal elements smaller than " << tol;
-      cout << " for a matrix of dimension " << m_N << endl;
+      cout << " for a matrix of dimension " << m_N << endl;*/
+      cout << m_N << "              " << k << endl;
       break;
     }
     findCS(A(maxi,maxi),A(maxj,maxj),A(maxi,maxj),c,s);  /*Finds the cosine and sine to set the largest value equal to zero*/

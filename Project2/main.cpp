@@ -24,7 +24,8 @@ int main(int argc, char const *argv[]){
   ofstream file;
   file.open(fileName);
 
-
+  cout << "The numer of iterations the Jacobi method needed to make the off diagonal elements smaller than the tolerance" << endl;
+  cout << "dimension:    " << "iterations:" << endl;
   for (int i = 3; i < 10; i++){
     JacobiSolver J(a,d,i);
     J.solve();
