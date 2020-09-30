@@ -11,22 +11,15 @@ filename_data = ".".join([problem, "txt"])
 plot_path = "/".join([".", "plots"])
 data_path = "/".join([".", "results"])
 
-
 #compile
 os.system("echo compiling...")
 os.system("g++ -o main.out main.cpp -larmadillo")
-#os.system("g++ -o main.out" + " " + all_cpp_codes + " " + compiler_flags) #compile codes
 
 #execute
 os.system("echo executing...")
 os.system("./main.out" + " " + str(N) + " " + problem)
 
-"""
-#moves data files to result directory
-if not os.path.exists(data_path):
-    os.makedirs(data_path)
-os.system(" ".join(["mv", filename_data, data_path]))
-"""
+
 #runs code for python plot
 os.system("echo creating plots...")
 os.system("python3 plot.py" + " " + filename_plot + " " + filename_data)

@@ -34,7 +34,6 @@ def analytical_eigenvectors(N):
     pass
 
 
-
 plt.plot(rho, min_eigvec_jacobi, label = 'Numerical solution')
 plt.legend()
 plt.xlabel('')
