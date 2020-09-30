@@ -24,17 +24,26 @@ rho0 = 0
 rhomax = 1
 h = rhomax/N
 
-rho = [rho0 + i*h for i in range(0,len(arma_lambda))]
+rho = [rho0 + i*h for i in range(0,N)]
+
 
 def analytical_eigenvalues(N):
-    pass
-
+    for j in range(1,N):
+        d = 2/h**2
+        a = -1/h**2
+        anal_lambda[j-1] = d + 2*a*np.cos(j*np.pi/N)
+    return anal_lambda
 
 def analytical_eigenvectors(N):
-    pass
+    u = np.zeros(N-1)
+    for j in range(1,N):
+        u[j-1] = np.sin(j*np.pi/N)
+    return u
 
+rho_anal = np.linspace(0,1,N-1)
 
 plt.plot(rho, min_eigvec_jacobi, label = 'Numerical solution')
+plt.plot(rho_anal,analytical_eigenvectors(N), label = 'Analytical solution')
 plt.legend()
 plt.xlabel('')
 plt.ylabel('')
