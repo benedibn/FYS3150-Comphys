@@ -25,8 +25,8 @@ int main(int argc, char const *argv[]){
   if (J.unitTests()){
     cout << "it worked\n";
   }
-  //J.solve();
-  //J.writeToFile(file);
+  J.solve();
+  J.writeToFile(file);
 
 
   file.close();
