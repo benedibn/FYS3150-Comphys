@@ -115,12 +115,16 @@ vec JacobiSolver::solve(){
 }
 
 void JacobiSolver::findCS(double& d1, double& d2, double& a, double& c, double& s){
+  /*Finds c and s*/
   double tau = (d2-d1)/(2*a);
   double t = -tau + sign(tau)*sqrt(1+pow(tau,2));
   c = 1/(sqrt(1+pow(t,2)));
   s = c*t;
 }
 void JacobiSolver::selection(double& maxa, int& maxi, int& maxj,mat A){
+  /*
+  Select the largest values in upper diagonal, and it's indices
+  */
   int n = A.n_rows;
   for (int i = 0; i < n-1; i++){
     /*Loops over all rows except the last one*/
@@ -136,17 +140,27 @@ void JacobiSolver::selection(double& maxa, int& maxi, int& maxj,mat A){
 }
 
 void JacobiSolver::writeToFile(ofstream& file){
-
+  /*
+  Writes amount of iterations, analytic eigenvalues, computed eigenvalues, and calculated eigenvector of smallest eigenvalue
+  */
   vec j_lambda = sort(m_lambda);
 
   int minLam = m_lambda.index_min();
   vec smallestEigenVec = m_V.col(minLam);
+  vec a_lambda = eig_sym(m_A);
   file << simTran << endl;
+  writeVecToFile(file, a_lambda);
   writeVecToFile(file, j_lambda);
   writeVecToFile(file, smallestEigenVec);
 }
+vec JacobiSolver::getLambda(){
+  return m_lambda;
+}
 
 bool JacobiSolver::unitTests(){
+  /*
+  Makes sure both tests work
+  */
   bool b1 = testSelection();
   bool b2 = testEigenVectors();
   if (b1 && b2){
@@ -155,6 +169,9 @@ bool JacobiSolver::unitTests(){
   return false;
 }
 bool JacobiSolver::testSelection(){
+  /*
+  Tests if the selevtion algorithm picks out the highest value, and the correct indices
+  */
   int n = 5;
   int i = 0, j = 0;
   double max = 0;
@@ -173,7 +190,29 @@ bool JacobiSolver::testSelection(){
 }
 
 bool JacobiSolver::testEigenVectors(){
-  JacobiSolver testJ(0.,1.,2);
+  /*
+  Tests if the eigenvalues found from The jacobi method matches the real eigenvalues
+  */
+  JacobiSolver testJ(1.,2.,3);
   testJ.solve();
-  return true;
+  vec computed = sort(testJ.getLambda());
+  vec calculated(3);
+  mat A(3,3,fill::ones);
+  A(0,0) = 2;
+  A(1,1) = 2;
+  A(2,2) = 2;
+  A(0,2) = 0;
+  A(2,0) = 0;
+  calculated = eig_sym(A);
+
+  vec diff = calculated - computed;
+  double size = 0;
+  for (int i = 0; i < 3; i++){
+    size += abs(diff(i));
+  }
+  if (size < 1e-6){
+    return true;
+  }
+
+  return false;
 }
