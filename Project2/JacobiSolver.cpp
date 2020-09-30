@@ -70,14 +70,7 @@ vec JacobiSolver::solve(){
 
     selection(maxa,maxi,maxj,A); //Finds max value on offdiag, and its indices
     if (pow(maxa,2) < tol){
-<<<<<<< HEAD
-      /*
-      cout << "The Jacobi method needed " << k << " iterations to make the off diagonal elements smaller than " << tol;
-      cout << " for a matrix of dimension " << m_N << endl;*/
-      cout << m_N << "              " << k << endl;
-=======
       simTran = k;
->>>>>>> 962985443d67e7ce8c278a5ac3d4f747d4b2d1c9
       break;
     }
     findCS(A(maxi,maxi),A(maxj,maxj),A(maxi,maxj),c,s);  /*Finds the cosine and sine to set the largest value equal to zero*/
