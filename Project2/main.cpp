@@ -1,9 +1,9 @@
 #include "EigenValueSolver.hpp"
 #include <fstream>
-#include <armadillo>
-#include "EigenValueSolver.cpp"
-#include "JacobiSolver.cpp"
-#include "ArmaSolver.cpp"
+//#include <armadillo>
+//#include "EigenValueSolver.cpp"
+//#include "JacobiSolver.cpp"
+//#include "ArmaSolver.cpp"
 
 using namespace std;
 using namespace arma;
