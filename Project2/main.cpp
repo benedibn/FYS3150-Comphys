@@ -65,7 +65,6 @@ int main(int argc, char const *argv[]){
 }
 
 
-
 double V_0(double rho){
   return 0.;
 }
