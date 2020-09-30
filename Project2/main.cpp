@@ -10,8 +10,9 @@ int main(int argc, char const *argv[]){
   (void) argc; (void) argv;
 
   int N = 3;
-  double a = -1;
-  double d = 2;
+  double h = 1/N;
+  double a = -1/pow(h,2);
+  double d = 2/pow(h,2);
 
   vec va(N-1,fill::ones);
   va *= a;

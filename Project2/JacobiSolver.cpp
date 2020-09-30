@@ -27,7 +27,7 @@ JacobiSolver::JacobiSolver(vec a, vec d){
 
 mat JacobiSolver::initialize(vec a, vec d){
   /*
-  Initializes the matrix with vectors
+  Initializes the matrix 
   */
   m_V = mat(m_N,m_N,fill::zeros);
   m_V(0,0) = 1; m_V(m_N-1,m_N-1) = 1;
