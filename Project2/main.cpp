@@ -1,9 +1,13 @@
-#include "EigenValueSolver.hpp"
+#include "JacobiSolver.hpp"
 #include <fstream>
 #include <armadillo>
+<<<<<<< HEAD
 //#include "EigenValueSolver.cpp"
 //#include "JacobiSolver.cpp"
 //#include "ArmaSolver.cpp"
+=======
+#include "JacobiSolver.cpp"
+>>>>>>> 962985443d67e7ce8c278a5ac3d4f747d4b2d1c9
 
 using namespace std;
 using namespace arma;
@@ -11,7 +15,7 @@ using namespace arma;
 int main(int argc, char const *argv[]){
   (void) argc; (void) argv;
 
-  int N = 6;
+  int N = 3;
   double a = -1;
   double d = 2;
 
@@ -23,6 +27,7 @@ int main(int argc, char const *argv[]){
   string fileName = "Eigenvalue.txt";
   ofstream file;
   file.open(fileName);
+<<<<<<< HEAD
 
   cout << "The numer of iterations the Jacobi method needed to make the off diagonal elements smaller than the tolerance" << endl;
   cout << "dimension:    " << "iterations:" << endl;
@@ -31,7 +36,14 @@ int main(int argc, char const *argv[]){
     J.solve();
     J.writeToFile(file);
     J.~JacobiSolver();
+=======
+  JacobiSolver J(a,d,N);
+  if (J.unitTests()){
+    cout << "it worked\n";
+>>>>>>> 962985443d67e7ce8c278a5ac3d4f747d4b2d1c9
   }
+  J.solve();
+  J.writeToFile(file);
 
 
   file.close();

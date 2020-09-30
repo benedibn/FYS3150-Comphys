@@ -1,6 +1,9 @@
 import os
 import sys
 
+
+os.system("c++ -o main.out *.cpp")      
+
 N = int(input("Insert number of mesh point N: "))
 problem = input("Choose problem (buckling beam/one electron/two electron): ")
 """
