@@ -170,7 +170,7 @@ bool JacobiSolver::unitTests(){
 }
 bool JacobiSolver::testSelection(){
   /*
-  Tests if the selevtion algorithm picks out the highest value, and the correct indices
+  Tests if the selection algorithm picks out the highest value, and the correct indices
   */
   int n = 5;
   int i = 0, j = 0;

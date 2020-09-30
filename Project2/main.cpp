@@ -10,13 +10,9 @@ int main(int argc, char const *argv[]){
   (void) argc; (void) argv;
 
   int N = 3;
-  double a = -1;
-  double d = 2;
+  double a = -1*pow(N,2);
+  double d = 2*pow(N,2);
 
-  vec va(N-1,fill::ones);
-  va *= a;
-  vec vd(N,fill::ones);
-  vd *= d;
 
   string fileName = "Eigenvalue.txt";
   ofstream file;
