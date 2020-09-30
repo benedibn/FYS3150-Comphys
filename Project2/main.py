@@ -1,17 +1,9 @@
 import os
 import sys
 
-
-<<<<<<< HEAD
-os.system("c++ -o main.out *.cpp")
-
 N = int(input("Insert number of mesh point N: "))
-algorithm = input("Choose problem to solve: BucklingBeam/OneElectron/TwoElectrons: ")
-=======
+problem = input("Choose problem (bucklingbeam/oneelectron/twoelectrons): ")
 
-
-#N = int(input("Insert number of mesh point N: "))
-#problem = input("Choose problem (buckling beam/one electron/two electron): ")
 """
 filename_plot = "_".join([problem, "solution", str(N)]) + ".pdf" #Name of figure file
 filename_data = "_".join([problem, "N", str(N)]) + ".txt" #Name of data file.
@@ -26,7 +18,7 @@ os.system("g++ -o main.out main.cpp -larmadillo")
 
 #execute
 os.system("echo executing...")
-os.system("./main.out")
+os.system("./main.out" + " " + str(N) + " " + problem) #Execute code
 
 """
 #moves data files to result directory
@@ -45,4 +37,3 @@ os.system(" ".join(["mv", filename_plot, plot_path]))
 """
 #done
 os.system("echo done.")
->>>>>>> 2c6259b15792199e53aae28164cecfacfc0eb984
