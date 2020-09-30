@@ -40,7 +40,7 @@ int main(int argc, char const *argv[]){
     ofstream file;
     file.open(fileName);
     double a = 0;
-    double b = 1;
+    double b = 8;
     JacobiSolver J(a,b,N,V_1);
 
     J.solve();
