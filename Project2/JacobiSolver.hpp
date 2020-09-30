@@ -27,8 +27,9 @@ public:
   JacobiSolver(double, double, int);
   vec solve();
   void writeToFile(ofstream&);
+  vec getLambda();
   bool unitTests();
-  void selection(double&, int&, int&, mat A);
+  void selection(double&, int&, int&, mat);
 };
 
 
@@ -44,11 +45,6 @@ namespace tFunk{
       file << v(i) << " ";
     }
     file << endl;
-  }
-
-  template<typename Base, typename T>
-  inline bool instanceOf(const T*){
-    return  is_base_of<Base, T>::value;
   }
 }
 
