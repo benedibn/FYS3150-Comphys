@@ -15,7 +15,6 @@ int main(int argc, char const *argv[]){
   double h = 1./(N+1);
   double rho_0 = 0;
   vec rho = rho(N-1,fill::ones);
-
   for (int i = 0; i < N; i++){
     rho[i] = rho_0 + i*h;
   }
