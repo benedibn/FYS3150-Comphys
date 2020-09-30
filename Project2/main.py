@@ -4,6 +4,7 @@ import sys
 N = int(input("Insert number of mesh point N: "))
 problem = input("Choose problem (bucklingbeam/oneelectron/twoelectrons): ")
 
+
 """
 filename_plot = "_".join([problem, "solution", str(N)]) + ".pdf" #Name of figure file
 filename_data = "_".join([problem, "N", str(N)]) + ".txt" #Name of data file.
