@@ -1,9 +1,7 @@
-#include "EigenValueSolver.hpp"
+#include "JacobiSolver.hpp"
 #include <fstream>
 #include <armadillo>
-#include "EigenValueSolver.cpp"
 #include "JacobiSolver.cpp"
-#include "ArmaSolver.cpp"
 
 using namespace std;
 using namespace arma;
@@ -11,7 +9,7 @@ using namespace arma;
 int main(int argc, char const *argv[]){
   (void) argc; (void) argv;
 
-  int N = 6;
+  int N = 3;
   double a = -1;
   double d = 2;
 
@@ -23,14 +21,12 @@ int main(int argc, char const *argv[]){
   string fileName = "Eigenvalue.txt";
   ofstream file;
   file.open(fileName);
-
-
-  for (int i = 3; i < 10; i++){
-    JacobiSolver J(a,d,i);
-    J.solve();
-    J.writeToFile(file);
-    J.~JacobiSolver();
+  JacobiSolver J(a,d,N);
+  if (J.unitTests()){
+    cout << "it worked\n";
   }
+  //J.solve();
+  //J.writeToFile(file);
 
 
   file.close();
