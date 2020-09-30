@@ -1,6 +1,6 @@
 #include "EigenValueSolver.hpp"
 #include <fstream>
-//#include <armadillo>
+#include <armadillo>
 //#include "EigenValueSolver.cpp"
 //#include "JacobiSolver.cpp"
 //#include "ArmaSolver.cpp"

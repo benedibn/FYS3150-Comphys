@@ -1,5 +1,5 @@
 #include "EigenValueSolver.hpp"
-//#include <armadillo>
+#include <armadillo>
 #include <fstream>
 
 using namespace std;
