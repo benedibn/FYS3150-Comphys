@@ -7,31 +7,36 @@
 using namespace std;
 using namespace arma;
 
+double V(double rho);
+
 int main(int argc, char const *argv[]){
-  (void) argc; (void) argv;
+  /*(void) argc;*/
 
-  int N = 3;
-  double a = -1;
-  double d = 2;
+  int N = atoi(argv[1]);
+  string problem = string(argv[2]);
 
-  vec va(N-1,fill::ones);
-  va *= a;
-  vec vd(N,fill::ones);
-  vd *= d;
+  if (problem == "bucklingbeam"){
 
-  string fileName = "Eigenvalue.txt";
-  ofstream file;
-  file.open(fileName);
-  JacobiSolver J(a,d,N);
-  if (J.unitTests()){
-    cout << "it worked\n";
+    string fileName = problem + ".txt";
+    ofstream file;
+    file.open(fileName);
+    double a = 0;
+    double b = 1;
+    JacobiSolver J(a,b,N,V);
+    cout << "hallo" << endl;
+/*
+    if (J.unitTests(V)){
+      cout << "it worked\n";
+    }
+*/
+    J.solve();
+    J.writeToFile(file);
+    file.close();
   }
-  J.solve();
-  J.writeToFile(file);
-
-
-  file.close();
-
 
   return 0;
+}
+
+double V(double rho){
+  return 0.;
 }

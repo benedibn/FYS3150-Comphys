@@ -24,8 +24,10 @@ def analytical_eigenvectors(N):
     pass
 
 print(N, eigenvals)
+
 plt.plot(N,eigenvals, label = 'Numerical solution')
 plt.legend()
 plt.xlabel('')
+plt.ylabel('')
 #plt.savefig(plot_filename)
 plt.show()

@@ -11,20 +11,20 @@ using namespace arma;
 class JacobiSolver{
 private:
   int m_N;
-  mat m_A;
+  mat A;
   mat m_V;
   vec m_lambda;
 
-  int simTran = 0;
 
-  mat initialize(vec,vec);
+//  mat initialize(vec,vec);
   void findCS(double&, double&, double&, double&, double&);
   vec eigenFunc(double);
   bool testSelection();
-  bool testEigenVectors();
+  //bool testEigenVectors();
 public:
-  JacobiSolver(vec,vec);
-  JacobiSolver(double, double, int);
+  int simTran;
+//JacobiSolver(vec,vec);
+  JacobiSolver(double a, double b, int N, double V(double rho));
   vec solve();
   void writeToFile(ofstream&);
   vec getLambda();
