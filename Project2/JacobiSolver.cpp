@@ -27,7 +27,7 @@ JacobiSolver::JacobiSolver(vec a, vec d){
 
 mat JacobiSolver::initialize(vec a, vec d){
   /*
-  Initializes the matrix 
+  Initializes the matrix
   */
   m_V = mat(m_N,m_N,fill::zeros);
   m_V(0,0) = 1; m_V(m_N-1,m_N-1) = 1;
@@ -170,7 +170,7 @@ bool JacobiSolver::unitTests(){
 }
 bool JacobiSolver::testSelection(){
   /*
-  Tests if the selevtion algorithm picks out the highest value, and the correct indices
+  Tests if the selection algorithm picks out the highest value, and the correct indices
   */
   int n = 5;
   int i = 0, j = 0;

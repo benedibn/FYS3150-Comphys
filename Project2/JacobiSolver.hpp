@@ -24,7 +24,7 @@ private:
   bool testEigenVectors();
 public:
   JacobiSolver(vec,vec);
-  JacobiSolver(double, double, int);
+  JacobiSolver(double a, double d, int N);
   vec solve();
   void writeToFile(ofstream&);
   vec getLambda();
