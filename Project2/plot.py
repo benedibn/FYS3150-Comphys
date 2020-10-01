@@ -40,9 +40,13 @@ def analytical_eigenvectors(N):
     return u
 
 title = infile_filename.strip(".txt")
-plt.plot(rho, min_eigvec_jacobi, label = 'Numerical solution')
-if title == "bucklingbeam":
+
+if
+    plt.plot(rho, min_eigvec_jacobi, label = 'Numerical solution')
+elif title == "bucklingbeam":
+    plt.plot(rho, min_eigvec_jacobi, label = 'Numerical solution')
     plt.plot(rho,analytical_eigenvectors(N), ":" ,label = 'Analytical solution')
+
 plt.legend()
 plt.title(title)
 plt.xlabel('rho')
