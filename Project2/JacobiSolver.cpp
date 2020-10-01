@@ -105,8 +105,10 @@ vec JacobiSolver::solve(){
 void JacobiSolver::findCS(double& d1, double& d2, double& a, double& c, double& s){
   /*Finds c and s*/
   double tau = (d2-d1)/(2*a);
+  double t;
+
   double t = -tau + sign(tau)*sqrt(1+pow(tau,2));
-  c = 1/(sqrt(1+pow(t,2)));
+  c = 1.0/(sqrt(1+pow(t,2)));
   s = c*t;
 }
 void JacobiSolver::selection(double& maxa, int& maxi, int& maxj,mat A){
