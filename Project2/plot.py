@@ -24,14 +24,16 @@ min_eigvec_jacobi = [0] + min_eigvec_jacobi + [0]
 N = len(min_eigvec_jacobi)
 
 rho = np.linspace(0,1,N)
-
+h = (rho[-1] - rho[0])/(N-1)
+"""
 def analytical_eigenvalues(N):
+    anal_lambda = np.zeros(N)
     for j in range(1,N):
         d = 2/h**2
         a = -1/h**2
         anal_lambda[j-1] = d + 2*a*np.cos(j*np.pi/(N-1))
     return anal_lambda
-
+"""
 def analytical_eigenvectors(N):
     u = np.zeros(N)
     for k in range(0,N):
