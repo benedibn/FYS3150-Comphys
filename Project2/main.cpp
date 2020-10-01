@@ -1,4 +1,3 @@
-
 #include "JacobiSolver.hpp"
 #include <fstream>
 #include <armadillo>
@@ -24,7 +23,6 @@ int main(int argc, char const *argv[]){
     double a = 0;
     double b = 1;
     JacobiSolver J(a,b,N,V_0);
-
 /*
     if (J.unitTests(V)){
       cout << "it worked\n";
@@ -40,7 +38,7 @@ int main(int argc, char const *argv[]){
     ofstream file;
     file.open(fileName);
     double a = 0;
-    double b = 8;
+    double b = 6;
     JacobiSolver J(a,b,N,V_1);
 
     J.solve();
@@ -73,5 +71,5 @@ double V_1(double rho){
 }
 double V_2(double rho){
   double omega = 0.01;
-  return omega*rho*rho + 1./rho;
+  return omega*omega*rho*rho + 1./rho;
 }
