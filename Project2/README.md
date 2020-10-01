@@ -1,0 +1,1 @@
+To compile and execute files for this project, you can simply just run the python-code 'main.py'. You will be asked to choose dimension of the matrix and which problem to solve in the terminal, and the results will be visualised in plots. 
