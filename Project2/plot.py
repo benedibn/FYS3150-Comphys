@@ -25,7 +25,7 @@ N = len(min_eigvec_jacobi)
 
 rho = np.linspace(0,1,N)
 
-def analytical_eigenvalues(N-2):
+def analytical_eigenvalues(N):
     for j in range(1,N):
         d = 2/h**2
         a = -1/h**2
@@ -39,9 +39,12 @@ def analytical_eigenvectors(N):
     u = u/np.linalg.norm(u)
     return u
 
+title = infile_filename.strip(".txt")
 plt.plot(rho, min_eigvec_jacobi, label = 'Numerical solution')
-plt.plot(rho,analytical_eigenvectors(N), ":" ,label = 'Analytical solution for buckling beam')
+if title == "bucklingbeam":
+    plt.plot(rho,analytical_eigenvectors(N), ":" ,label = 'Analytical solution')
 plt.legend()
+plt.title(title)
 plt.xlabel('rho')
 plt.ylabel('u(rho)')
 plt.savefig(plot_filename)

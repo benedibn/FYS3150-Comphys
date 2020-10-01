@@ -71,5 +71,5 @@ double V_1(double rho){
 }
 double V_2(double rho){
   double omega = 0.01;
-  return omega*rho*rho + 1./rho;
+  return omega*omega*rho*rho + 1./rho;
 }
