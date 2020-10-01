@@ -9,6 +9,7 @@ using namespace arma;
 double V_0(double rho);
 double V_1(double rho);
 double V_2(double rho);
+double omega;
 
 int main(int argc, char const *argv[]){
   /*(void) argc;*/
@@ -47,16 +48,21 @@ int main(int argc, char const *argv[]){
   }
 
   if (problem == "twoelectrons"){
-    string fileName = problem + ".txt";
-    ofstream file;
-    file.open(fileName);
-    double a = 0;
-    double b = 1;
-    JacobiSolver J(a,b,N,V_2);
+    double omega_r[] = {0.01, 0.5, 1, 5};
 
-    J.solve();
-    J.writeToFile(file);
-    file.close();
+    for (int i = 0; i < 4; i++){
+      string fileName = problem +"_omega_"+to_string(i)+".txt";
+      ofstream file;
+      file.open(fileName);
+      double a = 0;
+      double b = 5;
+      omega = omega_r[i];
+
+      JacobiSolver J(a,b,N,V_2);
+      J.solve();
+      J.writeToFile(file);
+      file.close();
+    }
   }
 
   return 0;
@@ -70,6 +76,5 @@ double V_1(double rho){
   return rho*rho;
 }
 double V_2(double rho){
-  double omega = 0.01;
   return omega*omega*rho*rho + 1./rho;
 }
