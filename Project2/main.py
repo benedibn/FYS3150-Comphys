@@ -7,9 +7,6 @@ problem = input("Choose problem (bucklingbeam/oneelectron/twoelectrons): ")
 if problem == "twoelectrons":
     filename_plot = "_".join([problem, "solution", str(N)]) + ".pdf"
 
-    plot_path = "/".join([".", "plots"])
-    data_path = "/".join([".", "results"])
-
     #Directory to place the figure
     plot_path = "/".join([".", "plots"])
 
